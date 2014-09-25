@@ -38,6 +38,7 @@ import java.util.Map;
 
 /**
 * Created by leixw
+ * flush num config of scribe server ,then the method  Log of scribe.Iface received .
 * <p/>
 * Author: leixw
 * Date: 2014/09/24
@@ -73,6 +74,7 @@ public class ScribeServer implements IConnection{
             if(null == messages||messages.isEmpty()){
                 return ResultCode.TRY_LATER;
             }
+            //parser scribe log
 
 
 

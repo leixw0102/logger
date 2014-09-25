@@ -18,10 +18,7 @@ package tv.icntv.logger;/*
  */
 
 import com.google.common.primitives.Ints;
-import com.google.inject.Binder;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Module;
+import com.google.inject.*;
 import com.google.inject.name.Names;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -33,6 +30,7 @@ import tv.icntv.logger.msg.receive.MsgExecutor;
 import tv.icntv.logger.msg.receive.ScribeServer;
 import tv.icntv.logger.msg.send.ISender;
 import tv.icntv.logger.msg.send.KafkaClient;
+import tv.icntv.logger.msg.send.KafkaSender;
 
 /**
  * Created by leixw
@@ -43,52 +41,53 @@ import tv.icntv.logger.msg.send.KafkaClient;
  */
 public class Main {
 
-    private static String SCRIBE_WORKDER="workers";
-    private static String SCRIBE_PROTS="port";
-
+    private static String SCRIBE_WORKER="workers";
+    private static String SCRIBE_PROT="port";
+    private static String KAFKA_PRODUCER_THREAD_NAME="kafkaTS";
+    private static final int DEFAULT_WORKERS = 10;
+    private static final int DEFAULT_PORT=14630;
+    private static final int DEFAULT_KAFKA_SIZE=10;
     private static Logger logger = LoggerFactory.getLogger(Main.class);
-    public static void main(final String[]args){
-        if(null == args || args.length==0){
-            logger.info("error args={}", args);
-            return ;
-        }
+    public static void main( String[]args){
         OptionParser parser = new Main().new ProducerConfig().getOptionParser();
         final OptionSet optionSet = parser.parse(args);
-        if(null == parser){
-            return;
-        }
+
         Injector injector = Guice.createInjector(new Module() {
 
             @Override
             public void configure(Binder binder) {
 
-                binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_WORKDER)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_WORKDER).toString()));
-                binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_PROTS)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_PROTS).toString()));
+                binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_WORKER)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_WORKER).toString()));
+                binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_PROT)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_PROT).toString()));
+                binder.bind(Integer.class).annotatedWith(Names.named(KAFKA_PRODUCER_THREAD_NAME)).toInstance(Ints.tryParse(optionSet.valueOf(KAFKA_PRODUCER_THREAD_NAME).toString()));
                 try {
                     binder.bind(IConnection.class).toConstructor(ScribeServer.class.getConstructor(Integer.class, Integer.class));
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();
                     return;
                 }
-                binder.bind(ISender.class).to(KafkaClient.class);
-                binder.bind(IReceiverAndSender.class).to(MsgExecutor.class);
+                binder.bind(ISender.class).to(KafkaSender.class);
+                binder.bind(KafkaClient.class).in(Scopes.SINGLETON);
+                binder.bind(IReceiverAndSender.class).to(MsgExecutor.class).in(Scopes.SINGLETON);;
             }
         });
-        IConnection receiver=injector.getInstance(IConnection.class);
-        receiver.start();
-
+//        IConnection receiver=injector.getInstance(IConnection.class);
+//        receiver.start();
+          KafkaClient client = injector.getInstance(KafkaClient.class);
+          client.say();
     }
 
     class ProducerConfig {
 
-        private static final int DEFAULT_WORKERS = 10;
-        private static final int DEFAULT_PORT=14630;
+
         public  OptionParser getOptionParser(){
 
             OptionParser parser = new OptionParser();
-            parser.accepts(SCRIBE_WORKDER).withOptionalArg().describedAs("start scribe server workers").ofType(Integer.class).defaultsTo(DEFAULT_WORKERS);
+            parser.accepts(SCRIBE_WORKER).withOptionalArg().describedAs("start scribe server workers").ofType(Integer.class).defaultsTo(DEFAULT_WORKERS);
+//
+            parser.accepts(SCRIBE_PROT).withRequiredArg().describedAs("scribe server listener port").ofType(Integer.class).defaultsTo(DEFAULT_PORT);
 
-            parser.accepts(SCRIBE_PROTS).withOptionalArg().defaultsTo("scribe server listener port").ofType(Integer.class).defaultsTo(DEFAULT_PORT);
+            parser.accepts(KAFKA_PRODUCER_THREAD_NAME).withOptionalArg().describedAs(" kafka producer thread size").ofType(Integer.class).defaultsTo(DEFAULT_KAFKA_SIZE);
             return parser;
         }
     }

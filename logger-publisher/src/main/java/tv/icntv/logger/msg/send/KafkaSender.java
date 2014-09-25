@@ -17,26 +17,23 @@ package tv.icntv.logger.msg.send;/*
  * under the License.
  */
 
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import tv.icntv.logger.exception.SendExpetion;
-
-import java.nio.charset.Charset;
 
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/24
- * Time: 15:29
+ * Date: 2014/09/25
+ * Time: 16:41
  */
-public class KafkaClient {
-    @Inject
-    @Named("kafkaTS")
-    private int kafkaThreadSize ;
-
-    public void say(){
-        System.out.println(kafkaThreadSize);
+public class KafkaSender extends AbstractSender implements Runnable{
+    @Override
+    public boolean send(byte[] msg, int compressed) throws SendExpetion {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public void run() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }
