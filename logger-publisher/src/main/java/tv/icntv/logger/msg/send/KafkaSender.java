@@ -19,6 +19,8 @@ package tv.icntv.logger.msg.send;/*
 
 import tv.icntv.logger.exception.SendExpetion;
 
+import java.util.concurrent.Callable;
+
 /**
  * Created by leixw
  * <p/>
@@ -26,14 +28,15 @@ import tv.icntv.logger.exception.SendExpetion;
  * Date: 2014/09/25
  * Time: 16:41
  */
-public class KafkaSender extends AbstractSender implements Runnable{
-    @Override
-    public boolean send(byte[] msg, int compressed) throws SendExpetion {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
+public class KafkaSender extends AbstractSender {
+
+    public KafkaSender(byte[] msg){
+
     }
 
+
     @Override
-    public void run() {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public boolean send(byte[] msg) throws SendExpetion {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

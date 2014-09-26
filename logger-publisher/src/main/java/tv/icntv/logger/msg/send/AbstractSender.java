@@ -32,15 +32,6 @@ import java.nio.charset.Charset;
  */
 public abstract class AbstractSender implements ISender{
 
-
-
-    @Override
-    public boolean send(byte[] msg) throws SendExpetion {
-        return send(msg, 0);  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-
-
     @Override
     public boolean send(String msg) throws SendExpetion {
         return send(msg,Charsets.UTF_8);  //To change body of implemented methods use File | Settings | File Templates.
@@ -48,11 +39,7 @@ public abstract class AbstractSender implements ISender{
 
     @Override
     public boolean send(String msg, Charset charset) throws SendExpetion {
-        return send(msg, charset,0);  //To change body of implemented methods use File | Settings | File Templates.
+        return send(msg.getBytes(charset));  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public boolean send(String msg, Charset charset, int compressed) throws SendExpetion {
-        return send(msg.getBytes(charset),compressed);  //To change body of implemented methods use File | Settings | File Templates.
-    }
 }

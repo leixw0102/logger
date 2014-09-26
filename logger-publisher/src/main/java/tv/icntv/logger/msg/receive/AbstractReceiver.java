@@ -17,8 +17,7 @@ package tv.icntv.logger.msg.receive;/*
 * under the License.
 */
 
-import com.google.inject.Inject;
-import tv.icntv.logger.msg.send.ISender;
+
 
 /**
 * Created by leixw
@@ -27,7 +26,6 @@ import tv.icntv.logger.msg.send.ISender;
 * Date: 2014/09/24
 * Time: 14:04
 */
-public abstract class AbstractReceiver implements IReceiverAndSender{
-    @Inject
-    protected ISender sender;
+public abstract class AbstractReceiver implements IReceiver {
+
 }

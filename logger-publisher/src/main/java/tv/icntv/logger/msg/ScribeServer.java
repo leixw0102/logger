@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg.receive;/*
+package tv.icntv.logger.msg;/*
 * Copyright 2014 Future TV, Inc.
 *
 * The contents of this file are subject to the terms
@@ -21,6 +21,7 @@ import com.facebook.fb303.fb_status;
 import com.facebook.generate.LogEntry;
 import com.facebook.generate.ResultCode;
 import com.facebook.generate.scribe;
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
@@ -32,6 +33,7 @@ import org.apache.thrift.transport.TNonblockingServerSocket;
 import org.apache.thrift.transport.TNonblockingServerTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tv.icntv.logger.msg.receive.IConnection;
 
 import java.util.List;
 import java.util.Map;
@@ -44,14 +46,12 @@ import java.util.Map;
 * Date: 2014/09/24
 * Time: 14:10
 */
-public class ScribeServer implements IConnection{
+public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
 
 
     private String splitter="\r\n";
     private TServer server;
-
-
 
     @Override
     public void start() {
@@ -69,16 +69,16 @@ public class ScribeServer implements IConnection{
     }
     class Receiver implements scribe.Iface {
 
+        @Inject
+        private IReceiverSender receiverAndSender;
         @Override
         public ResultCode Log(List<LogEntry> messages) throws TException {
             if(null == messages||messages.isEmpty()){
                 return ResultCode.TRY_LATER;
             }
-            //parser scribe log
-
-
-
-            return null;  //To change body of implemented methods use File | Settings | File Templates.
+            //parser scribe log and receive
+            boolean result = receiverAndSender.receiveAndSend(messages);
+            return result?ResultCode.OK:ResultCode.TRY_LATER;
         }
 
         @Override

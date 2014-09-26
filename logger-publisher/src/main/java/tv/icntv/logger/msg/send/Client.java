@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg.send;/*
+/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -16,43 +16,14 @@ package tv.icntv.logger.msg.send;/*
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import tv.icntv.logger.exception.SendExpetion;
-
-import java.nio.charset.Charset;
-import java.util.concurrent.Callable;
+package tv.icntv.logger.msg.send;
 
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/24
- * Time: 13:52
+ * Date: 2014/09/26
+ * Time: 10:31
  */
-public interface ISender{
-    /**
-     *
-     * @param msg
-     * @return
-     */
-    public boolean send(String msg) throws SendExpetion;
-    /**
-     *
-     * @param msg
-     * @param charset
-     * @return
-     */
-    public boolean send(String msg,Charset charset) throws SendExpetion;
-
-
-
-    /**
-     *
-     * @param msg
-     * @return
-     * @throws SendExpetion
-     */
-    public boolean send(byte[] msg) throws SendExpetion;
-
-
+public interface Client {
 }

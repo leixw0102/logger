@@ -29,10 +29,10 @@ import java.util.List;
  * Date: 2014/09/24
  * Time: 13:48
  */
-public interface IReceiver {
+public interface IReceiver<I,O> {
 
 
-    public List<String> receive() throws ReceiveExpetion;
+    public List<O> receive(List<I> msgs) throws ReceiveExpetion;
 
 
 }

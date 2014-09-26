@@ -31,11 +31,10 @@ import java.util.List;
  * Time: 14:41
  */
 public class Receiver implements IReceiver {
+
+
     @Override
-    public List<String> receive() throws ReceiveExpetion {
-        System.out.println("receive..");
-        return Lists.newArrayList("hello word");  //To change body of implemented methods use File | Settings | File Templates.
+    public List receive(List msgs) throws ReceiveExpetion {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
-
-
 }

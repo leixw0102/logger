@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg.receive;/*
+package tv.icntv.logger.msg;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,21 +17,22 @@ package tv.icntv.logger.msg.receive;/*
  * under the License.
  */
 
-import tv.icntv.logger.exception.ReceiveExpetion;
-import tv.icntv.logger.msg.send.ISender;
+import com.facebook.generate.LogEntry;
+
+import java.util.List;
 
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/24
- * Time: 14:03
+ * Date: 2014/09/26
+ * Time: 11:03
  */
-public interface IReceiverAndSender extends IReceiver{
+public class MsgProcess extends AbstractReceiverAndSender  {
 
-    /**
-     *
-     * @throws tv.icntv.logger.exception.ReceiveExpetion
-     */
-    public void receiveAndSend() throws ReceiveExpetion;
+    @Override
+    public List<String> msgChange(List<LogEntry> msgs) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 }

@@ -19,9 +19,17 @@ package tv.icntv.logger.msg.send;/*
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+import kafka.producer.ProducerConfig;
+import tv.icntv.logger.common.PropertiesLoaderUtils;
 import tv.icntv.logger.exception.SendExpetion;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Properties;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /**
  * Created by leixw
@@ -35,8 +43,26 @@ public class KafkaClient {
     @Named("kafkaTS")
     private int kafkaThreadSize ;
 
-    public void say(){
-        System.out.println(kafkaThreadSize);
+    ExecutorService service = Executors.newFixedThreadPool(kafkaThreadSize);
+    ProducerConfig producerConfig ;
+
+    public KafkaClient() {
+        try {
+            Properties pro = PropertiesLoaderUtils.loadAllProperties("kafka-producer.properties");
+            producerConfig = new ProducerConfig(pro);
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+    }
+
+
+    public Future start(Callable callable){
+        return service.submit(callable);
+    }
+
+
+    public void shutdown(){
+        service.shutdown();
     }
 
 }

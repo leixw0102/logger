@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg.receive;/*
+package tv.icntv.logger.msg;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -18,6 +18,8 @@ package tv.icntv.logger.msg.receive;/*
  */
 
 import tv.icntv.logger.exception.ReceiveExpetion;
+import tv.icntv.logger.msg.receive.IReceiver;
+import tv.icntv.logger.msg.send.ISender;
 
 import java.util.List;
 
@@ -25,18 +27,14 @@ import java.util.List;
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/24
- * Time: 15:52
+ * Date: 2014/09/26
+ * Time: 11:01
  */
-public class MsgExecutor extends AbstractReceiver {
-    @Override
-    public void receiveAndSend() throws ReceiveExpetion {
-        System.out.println(sender.send(""));
-        System.out.println("....");
-    }
+public interface IReceiverSender<I,O> extends IReceiver ,ISender{
 
-    @Override
-    public List<String> receive() throws ReceiveExpetion {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
-    }
+    /**
+     *
+     * @throws tv.icntv.logger.exception.ReceiveExpetion
+     */
+    public boolean receiveAndSend(List<I> message) throws ReceiveExpetion;
 }
