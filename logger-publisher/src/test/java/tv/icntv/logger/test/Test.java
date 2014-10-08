@@ -21,6 +21,8 @@ import com.google.inject.*;
 
 import org.junit.After;
 import org.junit.Before;
+import tv.icntv.logger.msg.IReceiverSender;
+import tv.icntv.logger.msg.MsgProcess;
 import tv.icntv.logger.msg.receive.IReceiver;
 import tv.icntv.logger.msg.recieve.Receiver;
 
@@ -40,6 +42,7 @@ public abstract class Test {
             @Override
             public void configure(Binder binder) {
                 binder.bind(IReceiver.class).to(Receiver.class).in(Scopes.SINGLETON);
+                binder.bind(IReceiverSender.class).to(MsgProcess.class);
             }
         });
     }
