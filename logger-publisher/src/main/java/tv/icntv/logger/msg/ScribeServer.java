@@ -50,7 +50,7 @@ public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
 
 
-    private String splitter="\r\n";
+    private String splitter="|";
     private TServer server;
 
     @Override

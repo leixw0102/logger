@@ -24,11 +24,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tv.icntv.logger.exception.ReceiveExpetion;
 import tv.icntv.logger.exception.SendExpetion;
-import tv.icntv.logger.msg.send.ISender;
+import tv.icntv.logger.msg.receive.CategoryEnum;
 import tv.icntv.logger.msg.send.KafkaClient;
 
 import java.nio.charset.Charset;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 /**
@@ -39,7 +41,7 @@ import java.util.concurrent.*;
  * Time: 11:04
  */
 public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEntry,String> {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    protected Logger logger = LoggerFactory.getLogger(getClass());
     @Inject
     protected KafkaClient client;
 
@@ -72,34 +74,12 @@ public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEn
         //To change body of implemented methods use File | Settings | File Templates.
 
         //message change
-        final List<String> msgs=msgChange(message);
-
-        Future<Integer> future=getClient().start(new Callable() {
-            @Override
-            public Object call() throws Exception {
-                //TODO send msgs
-//                sender.send(msgs);
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
-            }
-        });
-        try {
-            int result = future.get(20, TimeUnit.SECONDS);
-            return result==0?true:false;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            logger.error("future result error={}",e.getMessage());
-            //To change body of catch statement use File | Settings | File Templates.
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            logger.error("future result error={}",e.getMessage());
-            //To change body of catch statement use File | Settings | File Templates.
-        } catch (TimeoutException e) {
-            logger.error("future result error={}",e.getMessage());
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-        return false;
+        logger.info("start transfer msg to kafka msg");
+        final Map<String,List<String>> msgs=msgChange(message);
+        logger.info("kafka msg generated,start send to kafka ");
+        return  client.send(msgs);
     }
-    public abstract List<String> msgChange(List<com.facebook.generate.LogEntry> msgs);
+    public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs);
 
     public void setClient(KafkaClient client) {
         this.client = client;

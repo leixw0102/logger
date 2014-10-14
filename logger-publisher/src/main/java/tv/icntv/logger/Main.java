@@ -71,6 +71,7 @@ public class Main {
             }
         });
         IConnection receiver=injector.getInstance(IConnection.class);
+        logger.info("scribe server start..");
         receiver.start();
 
     }
@@ -85,7 +86,7 @@ public class Main {
 //
             parser.accepts(SCRIBE_PORT).withRequiredArg().describedAs("scribe server listener port").ofType(Integer.class).defaultsTo(DEFAULT_PORT);
 
-            parser.accepts(KAFKA_PRODUCER_THREAD_NAME).withOptionalArg().describedAs(" kafka producer thread size").ofType(Integer.class).defaultsTo(DEFAULT_KAFKA_SIZE);
+            parser.accepts(KAFKA_PRODUCER_THREAD_NAME).withOptionalArg().describedAs("kafka producer thread size").ofType(Integer.class).defaultsTo(DEFAULT_KAFKA_SIZE);
             return parser;
         }
     }
