@@ -12,7 +12,8 @@
         <module>scribe-msg</module>
         <module>logger-common</module>
         <module>logger-publisher</module>
-        <module>logger-cousumer</module>
+        <module>logger-consumer</module>
+
     </modules>
     <properties>
         <lib.thrift>0.7.0</lib.thrift>
