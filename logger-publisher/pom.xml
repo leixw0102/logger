@@ -36,21 +36,22 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.9.2</artifactId>
-            <scope>${kafka.version}</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jmxri</artifactId>
-                    <groupId>com.sun.jmx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jms</artifactId>
-                    <groupId>javax.jms</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jmxtools</artifactId>
-                    <groupId>com.sun.jdmk</groupId>
-                </exclusion>
-            </exclusions>
+            <version>${kafka.version}</version>
+            <scope>compile</scope>
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jmxri</artifactId>-->
+                    <!--<groupId>com.sun.jmx</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jms</artifactId>-->
+                    <!--<groupId>javax.jms</groupId>-->
+                <!--</exclusion>-->
+                <!--<exclusion>-->
+                    <!--<artifactId>jmxtools</artifactId>-->
+                    <!--<groupId>com.sun.jdmk</groupId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
         </dependency>
 
         <dependency>
@@ -58,5 +59,36 @@
             <artifactId>jopt-simple</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.3</version>
 
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>${artifactId}-${dev.build.timestamp}</finalName>
+                    <descriptors>
+                        <!--<descriptorRef>jar-with-dependencies</descriptorRef>-->
+                        <descriptor>src/assembly/assembly.xml</descriptor>
+                    </descriptors>
+                    <!--<archive>-->
+                        <!--<manifest>-->
+                            <!--<mainClass>tv.icntv.logger.Main</mainClass>-->
+                        <!--</manifest>-->
+                    <!--</archive>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

@@ -11,5 +11,46 @@
 
     <artifactId>logger-cousumer</artifactId>
 
+    <profiles>
+        <profile>
+            <id>hdfs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <version>2.4</version>
 
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>hdfs-${dev.build.timestamp}-bin</finalName>
+                            <descriptorRefs>
+                                <descriptorRef>src/assembly/hdfs-assembly.xml</descriptorRef>
+                            </descriptorRefs>
+                            <!--<archive>-->
+                                <!--<manifest>-->
+                                    <!--<mainClass>tv.icntv.logger.Main</mainClass>-->
+                                <!--</manifest>-->
+                            <!--</archive>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>make-assembly</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>assembly</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>storm</id>
+        </profile>
+        <profile>
+            <id>search</id>
+        </profile>
+    </profiles>
 </project>

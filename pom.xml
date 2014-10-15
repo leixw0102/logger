@@ -25,6 +25,10 @@
         <java.version>1.6</java.version>
         <kafka.version>0.8.1.1</kafka.version>
         <jopt.simple.version>4.6</jopt.simple.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
+        <dev.build.timestamp>${maven.build.timestamp}</dev.build.timestamp>
+
     </properties>
     <dependencyManagement>
         <dependencies>
