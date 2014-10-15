@@ -10,12 +10,58 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>logger-cousumer</artifactId>
-
+    <dependencies>
+        <dependency>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka_2.9.2</artifactId>
+            <version>${kafka.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>tv.icntv.logger</groupId>
+            <artifactId>logger-common</artifactId>
+            <version>${version}</version>
+        </dependency>
+    </dependencies>
     <profiles>
         <profile>
             <id>hdfs</id>
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <!--<excludes>-->
+                                <!--<exclude>*.xml</exclude>-->
+                            <!--</excludes>-->
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+
+                                <id>copy-resources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>target/classes</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/module/hdfs</directory>
+                                            <filtering>true</filtering>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+
+                        </executions>
+
+                    </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-assembly-plugin</artifactId>
@@ -24,14 +70,10 @@
                         <configuration>
                             <appendAssemblyId>false</appendAssemblyId>
                             <finalName>hdfs-${dev.build.timestamp}-bin</finalName>
-                            <descriptorRefs>
-                                <descriptorRef>src/assembly/hdfs-assembly.xml</descriptorRef>
-                            </descriptorRefs>
-                            <!--<archive>-->
-                                <!--<manifest>-->
-                                    <!--<mainClass>tv.icntv.logger.Main</mainClass>-->
-                                <!--</manifest>-->
-                            <!--</archive>-->
+
+                            <descriptors>
+                                <descriptor>src/assembly/hdfs-assembly.xml</descriptor>
+                            </descriptors>
                         </configuration>
                         <executions>
                             <execution>
