@@ -8,8 +8,8 @@
     <includeBaseDirectory>true</includeBaseDirectory>
     <fileSets>
         <fileSet>
-            <directory>src/main/bin</directory>
-            <outputDirectory>/</outputDirectory>
+            <directory>src/bin/storm</directory>
+            <outputDirectory>bin</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>src/main/config</directory>
