@@ -19,6 +19,9 @@ package tv.icntv.logger.msg.send;/*
 
 import com.google.common.primitives.Longs;
 import kafka.producer.Partitioner;
+import kafka.utils.VerifiableProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by leixw
@@ -28,13 +31,20 @@ import kafka.producer.Partitioner;
  * Time: 15:29
  */
 public class IpPartitioner implements Partitioner {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+    public IpPartitioner (VerifiableProperties props) {
+
+    }
     @Override
     public int partition(Object key, int i) {
         int partition = 0;
+        logger.info(key.toString()+"\t"+i);
         String stringKey = (String) key;
-
+        try{
         partition = (int) (Longs.tryParse(stringKey) % i);
+        }catch (Exception e){
 
+        }
         return partition;
     }
 }

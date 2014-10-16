@@ -74,9 +74,13 @@ public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEn
         //To change body of implemented methods use File | Settings | File Templates.
 
         //message change
-        logger.info("start transfer msg to kafka msg");
+        if(logger.isDebugEnabled()){
+            logger.debug("start transfer msg to kafka msg");
+        }
         final Map<String,List<String>> msgs=msgChange(message);
-        logger.info("kafka msg generated,start send to kafka ");
+        if(logger.isDebugEnabled()){
+            logger.debug("kafka msg generated,start send to kafka ");
+        }
         return  client.send(msgs);
     }
     public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs);

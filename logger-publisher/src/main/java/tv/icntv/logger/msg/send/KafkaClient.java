@@ -98,6 +98,9 @@ public class KafkaClient {
                 return new KeyedMessage<String,String>(topic,ip,input);  //To change body of implemented methods use File | Settings | File Templates.
             }
         });
+        if(logger.isDebugEnabled()){
+            logger.debug("send topic ={},and size={}",topic ,kafkaMsgs.size());
+        }
         producer.send(kafkaMsgs);
         producer.close();
         return true;

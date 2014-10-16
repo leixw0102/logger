@@ -1,5 +1,4 @@
 #!/bin/sh
-
 base_dir=$(dirname $0)/..
 
 # loading dependency jar in lib directory

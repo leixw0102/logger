@@ -18,6 +18,7 @@ package tv.icntv.consumer;/*
  */
 
 import com.google.common.collect.Maps;
+
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
@@ -101,6 +102,7 @@ public class IcntvConsumerGroup {
 
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
         for (final KafkaStream stream : streams) {
+
             executor.submit(new Consumer(stream));
         }
     }
@@ -118,9 +120,9 @@ public class IcntvConsumerGroup {
     }
 
     public static void main(String[]args){
-        if(null == args || args.length !=3){
-            return;
-        }
-        new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2]).run();
+//        if(null == args || args.length !=3){
+//            return;
+//        }
+        new IcntvConsumerGroup("icntv.no.real.time",4,"icntv-hdfs-group").run();
     }
 }

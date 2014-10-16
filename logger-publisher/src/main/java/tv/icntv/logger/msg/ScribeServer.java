@@ -49,8 +49,6 @@ import java.util.Map;
 public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
 
-
-    private String splitter="|";
     private TServer server;
 
     @Override
@@ -59,25 +57,36 @@ public class ScribeServer implements IConnection {
         startupThread.start();
     }
 
+    private IReceiverSender receiveAndSend;
     private int workers;
     private int port;
 
+    public IReceiverSender getReceiveAndSend() {
+        return receiveAndSend;
+    }
+    @Inject
+    public void setReceiveAndSend(IReceiverSender receiveAndSend) {
+        this.receiveAndSend = receiveAndSend;
+    }
 
     public ScribeServer(@Named("port")Integer port,@Named("workers")Integer workers){
         this.workers=workers;
         this.port=port;
+
     }
     class Receiver implements scribe.Iface {
 
-        @Inject
-        private IReceiverSender receiverAndSender;
+
         @Override
         public ResultCode Log(List<LogEntry> messages) throws TException {
-            if(null == messages||messages.isEmpty()){
-                return ResultCode.TRY_LATER;
+            if(LOG.isDebugEnabled()){
+                LOG.debug("receive ...."+messages.size());
             }
+
             //parser scribe log and receive
-            boolean result = receiverAndSender.receiveAndSend(messages);
+            boolean result = receiveAndSend.receiveAndSend(messages);
+
+            LOG.info("send kafka result ={}",result);
             return result?ResultCode.OK:ResultCode.TRY_LATER;
         }
 

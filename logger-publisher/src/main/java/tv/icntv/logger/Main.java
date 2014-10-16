@@ -17,6 +17,7 @@ package tv.icntv.logger;/*
  * under the License.
  */
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.*;
 import com.google.inject.name.Names;
@@ -24,6 +25,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tv.icntv.logger.msg.AbstractReceiverAndSender;
 import tv.icntv.logger.msg.IReceiverSender;
 import tv.icntv.logger.msg.MsgProcess;
 import tv.icntv.logger.msg.receive.IConnection;
@@ -56,7 +58,10 @@ public class Main {
 
             @Override
             public void configure(Binder binder) {
+                binder.bind(KafkaClient.class).in(Scopes.SINGLETON);
 
+                binder.bind(IReceiverSender.class).to(AbstractReceiverAndSender.class);
+                binder.bind(AbstractReceiverAndSender.class).to(MsgProcess.class);
                 binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_WORKER)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_WORKER).toString()));
                 binder.bind(Integer.class).annotatedWith(Names.named(SCRIBE_PORT)).toInstance(Ints.tryParse(optionSet.valueOf(SCRIBE_PORT).toString()));
                 binder.bind(Integer.class).annotatedWith(Names.named(KAFKA_PRODUCER_THREAD_NAME)).toInstance(Ints.tryParse(optionSet.valueOf(KAFKA_PRODUCER_THREAD_NAME).toString()));
@@ -66,14 +71,16 @@ public class Main {
                     e.printStackTrace();
                     return;
                 }
-                binder.bind(KafkaClient.class).in(Scopes.SINGLETON);
-                binder.bind(IReceiverSender.class).to(MsgProcess.class).in(Scopes.SINGLETON);
+
             }
         });
+
         IConnection receiver=injector.getInstance(IConnection.class);
         logger.info("scribe server start..");
         receiver.start();
 
+//        KafkaClient client = injector.getInstance(KafkaClient.class);
+//        client.send("icntv.no.real.time", Lists.newArrayList("123456|ac:sd:dd:dw|23-sdf|2.0.0|23456|231212|232323|1|2|sd|sd|sd|sd"));
     }
 
     class ProducerConfig {
