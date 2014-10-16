@@ -81,6 +81,7 @@ public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEn
         if(logger.isDebugEnabled()){
             logger.debug("kafka msg generated,start send to kafka ");
         }
+
         return  client.send(msgs);
     }
     public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs);

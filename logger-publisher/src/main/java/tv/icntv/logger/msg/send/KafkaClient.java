@@ -73,7 +73,7 @@ public class KafkaClient {
     public boolean send(Map<String,List<String>> kvs){
 
         if(null == kvs || kvs.isEmpty()){
-            logger.info("send kafka msg is null");
+            logger.info("send kafka msg is null,skip send to kafka ,but this operator return true");
             return true;
         }
         Iterator<String> it = kvs.keySet().iterator();

@@ -52,7 +52,16 @@ public class MsgProcess extends AbstractReceiverAndSender  {
             logger.debug("scribe receive msgs size={}",msgs.size());
         }
         for(LogEntry logEntry : msgs){
-
+            // scribe category --> kafka topic
+            CategoryEnum categoryEnum =null;
+            try {
+                categoryEnum=CategoryEnum.valueOf(logEntry.getCategory().toUpperCase());
+            } catch (Exception e){
+                logger.error("scribe msg category ={};but is not icntv log defined ",logEntry.category);
+                continue;
+            }
+            String topic=categoryEnum.getKafkaTopic();
+            // msg split
             List<String> values=Splitter.on(split).trimResults().limit(7).splitToList(logEntry.getMessage());
             String contents=values.get(6);
             if(Strings.isNullOrEmpty(contents)){
@@ -75,7 +84,7 @@ public class MsgProcess extends AbstractReceiverAndSender  {
                     return prifixMsg+split+c;
                 }
             });
-            String topic= CategoryEnum.valueOf(logEntry.getCategory().toUpperCase()).getKafkaTopic();
+
             if(kvs.containsKey(topic)){
                 List<String> value=kvs.get(topic);
                 value.addAll(tempCs);

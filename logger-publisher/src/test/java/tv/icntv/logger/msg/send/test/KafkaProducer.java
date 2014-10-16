@@ -20,8 +20,11 @@ package tv.icntv.logger.msg.send.test;/*
 import kafka.javaapi.producer.Producer;
 import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
+import org.junit.Test;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
+import tv.icntv.logger.msg.MsgProcess;
 
+import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.Properties;
 
@@ -32,14 +35,16 @@ import java.util.Properties;
  * Date: 2014/09/26
  * Time: 09:37
  */
-public class KafkaProducer {
-    void test() throws IOException {
+public class KafkaProducer extends tv.icntv.logger.test.Test{
+
+    @Test
+    public void testProperties() throws IOException {
         Properties pro = PropertiesLoaderUtils.loadAllProperties("kafka-producer.properties");
-        ProducerConfig config=new ProducerConfig(pro);
-        Producer<String, String> producer=new Producer<String, String>(config);
-        KeyedMessage<String,String> data=new KeyedMessage<String, String>("test", "sdfsd");
-        producer.send(data);
-        producer.close();
-        System.out.println("...");
+        assertNotNull(pro.getProperty("metadata.broker.list"));
+        assertNotNull(pro.getProperty("producer.type"));
+        assertNotNull(pro.getProperty("compression.codec"));
+        assertNotNull(pro.getProperty("serializer.class"));
     }
+
+
 }
