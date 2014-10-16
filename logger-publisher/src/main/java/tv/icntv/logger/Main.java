@@ -17,7 +17,6 @@ package tv.icntv.logger;/*
  * under the License.
  */
 
-import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.*;
 import com.google.inject.name.Names;
@@ -28,11 +27,9 @@ import org.slf4j.LoggerFactory;
 import tv.icntv.logger.msg.AbstractReceiverAndSender;
 import tv.icntv.logger.msg.IReceiverSender;
 import tv.icntv.logger.msg.MsgProcess;
-import tv.icntv.logger.msg.receive.IConnection;
 import tv.icntv.logger.msg.ScribeServer;
-import tv.icntv.logger.msg.send.ISender;
+import tv.icntv.logger.msg.receive.IConnection;
 import tv.icntv.logger.msg.send.KafkaClient;
-import tv.icntv.logger.msg.send.KafkaSender;
 
 /**
  * Created by leixw

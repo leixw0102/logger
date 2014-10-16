@@ -24,14 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tv.icntv.logger.exception.ReceiveExpetion;
 import tv.icntv.logger.exception.SendExpetion;
-import tv.icntv.logger.msg.receive.CategoryEnum;
 import tv.icntv.logger.msg.send.KafkaClient;
 
 import java.nio.charset.Charset;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 
 /**
  * Created by leixw

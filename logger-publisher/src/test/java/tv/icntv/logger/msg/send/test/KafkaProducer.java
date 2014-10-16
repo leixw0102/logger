@@ -17,16 +17,13 @@ package tv.icntv.logger.msg.send.test;/*
  * under the License.
  */
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
 import org.junit.Test;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
-import tv.icntv.logger.msg.MsgProcess;
 
-import static org.junit.Assert.*;
 import java.io.IOException;
 import java.util.Properties;
+
+import static org.junit.Assert.assertNotNull;
 
 /**
  * Created by leixw

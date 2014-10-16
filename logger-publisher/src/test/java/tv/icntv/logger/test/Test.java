@@ -17,21 +17,14 @@ package tv.icntv.logger.test;/*
  * under the License.
  */
 
-import com.google.common.primitives.Ints;
 import com.google.inject.*;
-
 import com.google.inject.name.Names;
-import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import org.junit.After;
 import org.junit.Before;
-import tv.icntv.logger.Main;
 import tv.icntv.logger.msg.IReceiverSender;
 import tv.icntv.logger.msg.MsgProcess;
 import tv.icntv.logger.msg.ScribeServer;
 import tv.icntv.logger.msg.receive.IConnection;
-import tv.icntv.logger.msg.receive.IReceiver;
-import tv.icntv.logger.msg.recieve.Receiver;
 import tv.icntv.logger.msg.send.KafkaClient;
 
 
