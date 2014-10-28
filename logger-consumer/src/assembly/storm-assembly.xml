@@ -10,6 +10,7 @@
         <fileSet>
             <directory>src/bin/storm</directory>
             <outputDirectory>bin</outputDirectory>
+            <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
             <directory>src/main/config</directory>

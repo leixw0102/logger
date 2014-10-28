@@ -17,6 +17,7 @@ package tv.icntv.logger;/*
  * under the License.
  */
 
+import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 import com.google.inject.*;
 import com.google.inject.name.Names;
@@ -24,6 +25,7 @@ import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tv.icntv.logger.common.LogBackConfigLoader;
 import tv.icntv.logger.msg.AbstractReceiverAndSender;
 import tv.icntv.logger.msg.IReceiverSender;
 import tv.icntv.logger.msg.MsgProcess;
@@ -47,7 +49,8 @@ public class Main {
     private static final int DEFAULT_PORT=14630;
     private static final int DEFAULT_KAFKA_SIZE=10;
     private static Logger logger = LoggerFactory.getLogger(Main.class);
-    public static void main( String[]args){
+    public static void main( String[]args) throws Exception {
+        LogBackConfigLoader.load(System.getProperty("publish-logback"));
         OptionParser parser = new Main().new ProducerConfig().getOptionParser();
         final OptionSet optionSet = parser.parse(args);
 

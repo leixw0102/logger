@@ -85,11 +85,13 @@ public class IcntvConsumerGroup {
         }
         this.groupId = groupId;
         properties.put("group.id",this.getGroupId());
+
         consumer = kafka.consumer.Consumer.createJavaConsumerConnector(new ConsumerConfig(properties));
         this.topic = topic;
 
         this.thread = thread;
         executor = Executors.newFixedThreadPool(this.getThread());
+        logger.info(this.getGroupId()+"\t"+this.getTopic()+"\t"+this.getThread()+"\t"+properties.getProperty("zookeeper.connect"));
         new ShutDown();
 
     }
@@ -123,6 +125,7 @@ public class IcntvConsumerGroup {
 //        if(null == args || args.length !=3){
 //            return;
 //        }
-        new IcntvConsumerGroup("icntv.no.real.time",4,"icntv-hdfs-group").run();
+//        new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2]).run();
+        new IcntvConsumerGroup("icntv.no.real.time",8,"hdfs-icntv-group").run();
     }
 }

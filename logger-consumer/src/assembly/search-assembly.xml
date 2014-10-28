@@ -16,7 +16,7 @@
         <fileSet>
             <directory>src/bin/search</directory>
             <outputDirectory>bin</outputDirectory>
-
+            <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
             <directory>src/main/module/search</directory>

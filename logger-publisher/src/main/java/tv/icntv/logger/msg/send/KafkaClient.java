@@ -19,6 +19,7 @@ package tv.icntv.logger.msg.send;/*
 
 import com.google.common.base.Function;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -50,13 +51,18 @@ public class KafkaClient {
     ProducerConfig producerConfig ;
     Producer<String,String> producer = null;
     public KafkaClient() {
+        Properties pro = null;
         try {
-            Properties pro = PropertiesLoaderUtils.loadAllProperties("kafka-producer.properties");
-            producerConfig = new ProducerConfig(pro);
-
+            String config=System.getProperty("publish-kafka");
+            if(Strings.isNullOrEmpty(config)){
+                config=  "kafka-producer.properties";
+            }
+             pro = PropertiesLoaderUtils.loadAllProperties(config);
         } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+             logger.error("load config kafka-producer.properties error");
         }
+        producerConfig = new ProducerConfig(pro);
+
     }
 
     /**

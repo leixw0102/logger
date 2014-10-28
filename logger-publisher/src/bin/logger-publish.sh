@@ -9,7 +9,13 @@ done
 
 echo $CLASSPATH
 
+if [ -z "$PUBLISH_LOG4J_OPTS" ]; then
+  PUBLISH_LOG4J_OPTS="-Dpublish-logback=%BASE_DIR%\config\logback.xml "
+fi
 
+if [ -z "$PUBLISH_KAFKA_OPTS" ]; then
+  PUBLISH_KAFKA_OPTS="-Dpublish-kafka=%BASE_DIR%\config\kafka-producer.properties "
+fi
 # Which java to use
 if [ -z "$JAVA_HOME" ]; then
   JAVA="java"
@@ -17,4 +23,4 @@ else
   JAVA="$JAVA_HOME/bin/java"
 fi
 
-java -classpath $CLASSPATH  tv.icntv.logger.Main
+java $PUBLISH_LOG4J_OPTS $PUBLISH_KAFKA_OPTS -classpath $CLASSPATH  tv.icntv.logger.Main

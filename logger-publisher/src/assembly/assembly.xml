@@ -9,6 +9,7 @@
     <fileSets>
         <fileSet>
             <directory>src/bin</directory>
+            <fileMode>755</fileMode>
             <outputDirectory>/bin</outputDirectory>
         </fileSet>
         <fileSet>
