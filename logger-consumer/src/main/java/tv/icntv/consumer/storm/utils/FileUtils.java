@@ -1,5 +1,6 @@
-package tv.icntv.consumer.utils;
+package tv.icntv.consumer.storm.utils;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
@@ -17,7 +18,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 
-public class FileUtils implements Constant{
+public class FileUtils implements Constant {
 
 	Properties pro;
 	private Logger logger = LoggerFactory.getLogger(FileUtils.class);
@@ -39,18 +40,29 @@ public class FileUtils implements Constant{
 	}
 
 	public FileUtils (){
+        String config="";
         try {
-            pro = PropertiesLoaderUtils.loadAllProperties("icntvStb.properties");
+            config = System.getProperty("consumer-hdfs-icntv");
+            if(Strings.isNullOrEmpty(config)){
+                config="icntvStb.properties";
+            }
+            pro = PropertiesLoaderUtils.loadAllProperties(config);
         } catch (IOException e) {
             logger.error("load properties name ={},but null" ,"icntvStb.properties");
         }
 
         //init
+        // source path
         path = pro.getProperty(SOURCE_PATH,"");
+        // file name format
         fileFormat = pro.getProperty(SOURCE_FILE_NAME);
+        //file roll interval
         rollInterval = Integer.parseInt(pro.getProperty(ROLL_INTERVAL, "1"));
+        //target url
         hdfs = pro.getProperty(HDFS_PATH,"hdfs://icntv/icntv/log/stb");
+        //lzo compressed path
         lzoPath = pro.getProperty(COMPRESSED_PATH,"/data/hadoop/icntv/log/lzoData");
+        //file charset ;default utf-8
         charset = pro.getProperty("icntv.stb.charset", "utf-8");
         //
 		if(!new File(path).exists()){
@@ -65,7 +77,8 @@ public class FileUtils implements Constant{
 				if(!tmpFile.exists()){
 					tmpFile.mkdirs();
 				}
-				String tempName=String.format(fileFormat, getCurrentDate(), new Date());
+                Date current= new Date();
+				String tempName=String.format(fileFormat, current,current);
 
 				setFileName(tmp+File.separator+tempName); //baseFileName+getCurrentDate()+"-"+String.format("%tH",new Date()) +suffix
 				logger.info("set basename from "+currentFile+" to "+getFileName());

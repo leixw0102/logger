@@ -9,14 +9,25 @@ done
 
 echo $CLASSPATH
 
+if [ -z "$CONSUMER_LOG4J_OPTS" ]; then
+  CONSUMER_LOG4J_OPTS="-Dconsumer-logback=%BASE_DIR%\resources\logback.xml "
+fi
+
+if [ -z "$CONSUMER_KAFKA_OPTS" ]; then
+  CONSUMER_KAFKA_OPTS="-Dconsumer-kafka=%BASE_DIR%\resources\consumer.xml "
+fi
+
+if [ -z "$CONSUMER_HDFS_STRATEGY_OPTS" ]; then
+  CONSUMER_HDFS_STRATEGY_OPTS="-Dconsumer-hdfs-icntv=%BASE_DIR%\resources\icntvStb.properties "
+fi
 
 # Which java to use
-if [ -z "$JAVA_HOME" ]; then
-  JAVA="java"
-else
-  JAVA="$JAVA_HOME/bin/java"
-fi
+#if [ -z "$JAVA_HOME" ]; then
+#  JAVA="java"
+#else
+#  JAVA="$JAVA_HOME/bin/java"
+#fi
 # real time msg ->storm:topic =icntv.real.time
 # no real time msg ->hdfs :icntv-hdfs-group or search : icntv-search-group: topic = icntv.no.real.time
 
-java -classpath $CLASSPATH  tv.icntv.consumer.IcntvConsumerGroup  icntv.no.real.time    4   icntv-hdfs-group
+java $CONSUMER_LOG4J_OPTS $CONSUMER_KAFKA_OPTS $CONSUMER_HDFS_STRATEGY_OPTS -classpath $CLASSPATH  tv.icntv.consumer.IcntvConsumerGroup  icntv.no.real.time    4   icntv-hdfs-group HDFS_CONSUMER

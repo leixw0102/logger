@@ -27,6 +27,9 @@
             <version>1.0-SNAPSHOT</version>
             <artifactId>hdfs</artifactId>
         </dependency>
+
+
+
     </dependencies>
     <profiles>
         <profile>
@@ -35,12 +38,9 @@
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <configuration>
-                            <!--<excludes>-->
-                            <!--<exclude>*.xml</exclude>-->
-                            <!--</excludes>-->
-                        </configuration>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                        <version>1.7</version>
+
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -61,6 +61,10 @@
                                             <filtering>true</filtering>
                                         </resource>
                                     </resources>
+                                    <filters>
+                                        <filter>src/main/java/tv/icntv/consumer/search/*</filter>
+                                        <filter>src/main/java/tv/icntv/consumer/storm/*</filter>
+                                    </filters>
                                 </configuration>
                             </execution>
 

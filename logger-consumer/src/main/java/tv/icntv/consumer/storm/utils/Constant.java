@@ -1,4 +1,4 @@
-package tv.icntv.consumer.utils;/*
+package tv.icntv.consumer.storm.utils;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -28,9 +28,11 @@ public interface Constant {
     public String SOURCE_PATH="icntv.stb.log.path";
     public String SOURCE_FILE_NAME="icntv.stb.log.file.format";
     public String ROLL_INTERVAL="icntv.stb.log.rollInterval";
+    public String SOURCE_TYPE="icntv.stb.decompress";
 
     public String COMPRESSED_PATH="icntv.stb.compress.log.path";
     public String COMPRESSED_SUFFIX="icntv.stb.compress.log.suffix";
+    public String COMPRESS_TYPE="icntv.stb.compress";
 
     public String READ_CHARSET="icntv.stb.charset";
     public String HDFS_PATH="icntv.stb.hdfs.url";

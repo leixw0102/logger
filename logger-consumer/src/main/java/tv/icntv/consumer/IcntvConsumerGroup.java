@@ -17,6 +17,7 @@ package tv.icntv.consumer;/*
  * under the License.
  */
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
 
 import kafka.consumer.ConsumerConfig;
@@ -24,6 +25,7 @@ import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tv.icntv.consumer.hdfs.HdfsConsumer;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
 
 import java.io.IOException;
@@ -47,7 +49,17 @@ public class IcntvConsumerGroup {
     private Integer thread;
     private Logger logger = LoggerFactory.getLogger(IcntvConsumerGroup.class);
 
+    private String consumerType;
 
+    private boolean isBatch;
+
+    public boolean isBatch() {
+        return isBatch;
+    }
+
+    public void setBatch(boolean batch) {
+        isBatch = batch;
+    }
 
     public String getTopic() {
         return topic;
@@ -74,10 +86,21 @@ public class IcntvConsumerGroup {
         this.groupId = groupId;
     }
 
-    public IcntvConsumerGroup(String topic,int thread,String groupId) {
+    public IcntvConsumerGroup(String topic,int thread,String groupId,String consumerType){
+        this(topic, thread, groupId,true,consumerType);
+    }
+
+    public IcntvConsumerGroup(String topic,int thread,String groupId,boolean isBatch,String consumerType) {
         logger.info("init ....");
+        this.isBatch = isBatch;
+        this.consumerType = consumerType;
         Properties properties=null;
+        String kafkaFile="";
         try {
+            kafkaFile=System.getProperty("consumer-kafka");
+            if(Strings.isNullOrEmpty(kafkaFile)){
+                kafkaFile = "consumer.properties";
+            }
             properties = PropertiesLoaderUtils.loadAllProperties("consumer.properties");
         } catch (IOException e) {
             logger.error("load consumer.properties error");
@@ -104,8 +127,8 @@ public class IcntvConsumerGroup {
 
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
         for (final KafkaStream stream : streams) {
-
-            executor.submit(new Consumer(stream));
+            Consumer consumerImpl = ConsumerType.valueOf(consumerType.toUpperCase()).getConsumer(stream);
+            executor.submit(consumerImpl);
         }
     }
 
@@ -122,10 +145,24 @@ public class IcntvConsumerGroup {
     }
 
     public static void main(String[]args){
-//        if(null == args || args.length !=3){
-//            return;
-//        }
-//        new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2]).run();
-        new IcntvConsumerGroup("icntv.no.real.time",8,"hdfs-icntv-group").run();
+        if(null == args || args.length !=3){
+            return;
+        }
+        IcntvConsumerGroup group = new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2],args[3]);
+    }
+
+    enum ConsumerType{
+        HDFS_CONSUMER {
+            @Override
+            public Consumer getConsumer(KafkaStream stream) {
+                return new HdfsConsumer(stream);  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        },STORM_CONSUMER {
+            @Override
+            public Consumer getConsumer(KafkaStream stream) {
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        };
+        public abstract Consumer getConsumer(KafkaStream stream);
     }
 }
