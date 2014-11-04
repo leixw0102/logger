@@ -1,5 +1,27 @@
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
     <display-name>Archetype Created Web Application</display-name>
-
-
+    <servlet>
+        <servlet-name>showUsers</servlet-name>
+        <servlet-class>tv.icntv.logger.data.api.UserServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>showUsers</servlet-name>
+        <url-pattern>/showCurrentUsers</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>showUserDistribute</servlet-name>
+        <servlet-class>tv.icntv.logger.data.api.UserDistributionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>showUserDistribute</servlet-name>
+        <url-pattern>/showUserDistribute</url-pattern>
+    </servlet-mapping>
+    <servlet>
+        <servlet-name>showUserValueDistribute</servlet-name>
+        <servlet-class>tv.icntv.logger.data.api.UserValueDistributionServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>showUserValueDistribute</servlet-name>
+        <url-pattern>/showUserValueDistribute</url-pattern>
+    </servlet-mapping>
 </web-app>

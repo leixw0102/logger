@@ -17,6 +17,7 @@ package tv.icntv.logger.data.api;/*
  * under the License.
  */
 
+import com.alibaba.fastjson.JSON;
 import redis.clients.jedis.Jedis;
 import tv.icntv.logger.common.DateUtils;
 import tv.icntv.logger.common.cache.IRedisCache;
@@ -25,11 +26,8 @@ import tv.icntv.logger.common.exception.CacheExecption;
 import tv.icntv.logger.data.AbstractServlet;
 import tv.icntv.logger.data.domain.ShowUsers;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Random;
 
 /**
  * Created by leixw
@@ -39,11 +37,19 @@ import java.io.PrintWriter;
  * Time: 14:02
  */
 public class UserServlet extends AbstractServlet {
+
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse response) throws ServletException, IOException {
-        setJSONType(response);
-        final String day = DateUtils.getDay("yyyy-MM-dd");
-        String number = "1";
+    protected void sendRandom(PrintWriter writer) {
+        //To change body of implemented methods use File | Settings | File Templates.
+        writer.println(JSON.toJSONString(new ShowUsers(Math.abs(random.nextInt())%1000 +"")));
+    }
+
+    @Override
+    public void sendRealData(PrintWriter writer) {
+        //To change body of implemented methods use File | Settings | File Templates.
+
+        String number = "";
         try {
             number= Redis.execute(new IRedisCache<String>() {
                 @Override
@@ -51,16 +57,20 @@ public class UserServlet extends AbstractServlet {
                     if(jedis.exists(day)){
                         return jedis.get(day);
                     }
-                    return "10";  //To change body of implemented methods use File | Settings | File Templates.
+                    return "0";  //To change body of implemented methods use File | Settings | File Templates.
                 }
             });
         }catch (Exception e){
-             logger.error("execute redis error ! ",e);
+            logger.error("execute redis error ! ",e);
         }
+        writer.println(JSON.toJSONString(new ShowUsers(number)));
+    }
 
-        PrintWriter writer = response.getWriter();
-        writer.println(new ShowUsers(number));
-        writer.flush();
-        writer.close();
+    public static void main(String [] args){
+        Random random1 = new Random();
+        for(int i=0;i<10;i++){
+
+        System.out.println(Math.abs(random1.nextInt())%1000);
+        }
     }
 }

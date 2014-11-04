@@ -25,17 +25,17 @@ package tv.icntv.logger.data.domain;/*
  * Time: 14:05
  */
 public class ShowUsers {
-    private String num;
+    private String userNumber;
 
-    public ShowUsers(String num) {
-        this.num = num;
+    public ShowUsers(String userNumber) {
+        this.userNumber = userNumber;
     }
 
-    public String getNum() {
-        return num;
+    public String getUserNumber() {
+        return userNumber;
     }
 
-    public void setNum(String num) {
-        this.num = num;
+    public void setUserNumber(String userNumber) {
+        this.userNumber = userNumber;
     }
 }

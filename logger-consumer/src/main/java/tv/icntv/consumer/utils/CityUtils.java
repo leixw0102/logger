@@ -37,7 +37,7 @@ public class CityUtils {
     static BiMap<String,Integer>  biMap = HashBiMap.create();
     static {
         try {
-            Properties properties = PropertiesLoaderUtils.loadAllProperties("city.txt");
+            Properties properties = PropertiesLoaderUtils.loadAllProperties("city-ip.txt");
             Set<Object> sets=properties.keySet();
             for(Object obj: sets){
                 biMap.put(obj.toString(), Ints.tryParse(properties.getProperty(obj.toString())));
@@ -58,4 +58,7 @@ public class CityUtils {
         }
         return -1;
     }
+
+
+
 }

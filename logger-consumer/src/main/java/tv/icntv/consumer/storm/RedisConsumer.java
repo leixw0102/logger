@@ -17,18 +17,19 @@ package tv.icntv.consumer.storm;/*
  * under the License.
  */
 
-import com.google.common.base.Function;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import com.google.common.base.Strings;
+import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import kafka.consumer.KafkaStream;
-import kafka.message.MessageAndMetadata;
 import redis.clients.jedis.Jedis;
 import tv.icntv.consumer.Consumer;
-import tv.icntv.consumer.storm.user.UserCount;
+import tv.icntv.consumer.utils.IpUtils;
 import tv.icntv.logger.common.DateUtils;
 import tv.icntv.logger.common.cache.IRedisCache;
 import tv.icntv.logger.common.cache.Redis;
 import tv.icntv.logger.common.exception.CacheExecption;
+import tv.icntv.logger.common.jdbc.JdbcUtils;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ import java.util.List;
  * Author: leixw
  * Date: 2014/10/30
  * Time: 14:17
- *
+ * <p/>
  * currentDay
  * totalDay
  */
@@ -47,79 +48,83 @@ public class RedisConsumer extends Consumer {
         super(stream);
     }
 
-
-    ILogger ilogger = new UserCount();
-    @Override
-    public void executeBatch(List<MessageAndMetadata<byte[], byte[]>> msgs) throws Exception {
-        final List<String> lines=Lists.transform(msgs,new Function<MessageAndMetadata<byte[], byte[]>, String>() {
-            @Override
-            public String apply( MessageAndMetadata<byte[], byte[]> input) {
-                return new String(input.message());
-            }
-        });
-        if(null == lines || lines.isEmpty()){
-            logger.info(" kafka msg 2 string ;but result null");
-            return;
+    private boolean innerExecute(String message, Jedis jedis) {
+        List<String> splitValues = Splitter.on("|").limit(10).trimResults().splitToList(message);
+        String icntvId = splitValues.get(0);
+        String module = splitValues.get(7);
+        String action = splitValues.get(8);
+        String ip = splitValues.get(4);
+        Long ipLong = 0L;
+        if (ip.contains(".")) {
+            ipLong = IpUtils.ipStrToLong(ip);
+        } else {
+            ipLong = Longs.tryParse(ip);
         }
-        Redis.execute(new IRedisCache<Boolean>() {
-            @Override
-            public Boolean callBack(Jedis jedis) throws CacheExecption {
-                for(String line : lines){
-                    logger.info("msg info ={}",line);
-                    List<String> splitValues=Splitter.on("|").limit(10).trimResults().splitToList(line);
-                    String icntvId = splitValues.get(0);
-                    String module = splitValues.get(7);
-                    String action = splitValues.get(8);
-                    String ip = splitValues.get(4);
-                    if(module.equalsIgnoreCase("1")){
-                        String key = DateUtils.getDay("yyyyMMdd")+"-"+icntvId;
-                        String value = action.equals("0")?"1":action.equals("1")?"-1":"0";
-                        if(jedis.exists(key)){
-                            jedis.lpush(key,value);
-                            //set num
-                            //set hset ,ip
-                            return true;
-                        }
-                        if(value.equalsIgnoreCase("-1") || value.equalsIgnoreCase("0")){
-                            logger.error("error .. but return true");
-                            return true;
-                        }
-                        return false;
-                    }
-                }
-                return true;  //To change body of implemented methods use File | Settings | File Templates.
+        if (module.equalsIgnoreCase("1")) {
+
+            String province_id = JdbcUtils.getResultForSql("select province_id from ipbase where start<=" + ipLong + " and end >= " + ipLong);
+            if (Strings.isNullOrEmpty(province_id)) {
+                province_id = "-1";
             }
-        }) ;
-    }
-
-
-
-    @Override
-    public void execute(MessageAndMetadata<byte[], byte[]> msg) throws Exception {
-        final String message = new String(msg.message());
-        Redis.execute(new IRedisCache<Boolean>() {
-            @Override
-            public Boolean callBack(Jedis jedis) throws CacheExecption {
-                List<String> splitValues = Splitter.on("|").limit(10).trimResults().splitToList(message);
-                String icntvId = splitValues.get(0);
-                String module = splitValues.get(7);
-                String action = splitValues.get(8);
-                if (module.equalsIgnoreCase("1")) {
-                    String key = DateUtils.getDay("yyyyMMdd") + "-" + icntvId;
-                    String value = action.equals("0") ? "1" : action.equals("1") ? "-1" : "0";
-                    if (jedis.exists(key)) {
-                        jedis.lpush(key, value);
-                        return true;
-                    }
-                    if (value.equalsIgnoreCase("-1") || value.equalsIgnoreCase("0")) {
-                        logger.error("error .. but return true");
-                        return true;
-                    }
-                    jedis.lpush(key, value);
-                    return true;
-                }
+            String day = DateUtils.getDay("yyyyMMdd");
+            Integer v = action.equals("0") ? 1 : action.equals("1") ? -1 : 0;
+            String userPushKey = day + "-" + icntvId;
+            String userHsetKey = day + "-user-dis";
+            Long num = 0L;
+            if (v == 0) {
                 return false;
             }
+            String lastStatus = jedis.lindex(userPushKey, 0);
+            if (Strings.isNullOrEmpty(lastStatus) || "null".equalsIgnoreCase(lastStatus)) {
+                lastStatus = "0";
+            }else {
+                lastStatus = lastStatus.split("-")[1];
+            }
+            if (v == 1 && 1 == Ints.tryParse(lastStatus)) {
+                logger.error("error,two online ");
+                return false;
+            }
+            if (v == -1 && -1 == Ints.tryParse(lastStatus)) {
+                logger.error("error ,tow offline");
+                return false;
+            }
+            if (v == -1 && 0 == Ints.tryParse(lastStatus)) {
+                logger.error("error,fist log is offline");
+                return false;
+            }
+            if (jedis.exists(day)) {
+                num = Longs.tryParse(jedis.get(day));
+            }
+            if (num != 0 && num + v <= 0) {
+                logger.info(" total num <0");
+                return false;
+            }
+
+
+            String oldNum = jedis.hget(userHsetKey, province_id);
+
+            if (Strings.isNullOrEmpty(oldNum)) {
+                oldNum = "0";
+            }
+            logger.info("province_id={} \t day={} \t exist num = {} \t current num ={} \t ip={} \t icntvId = {} \t hset oldNum ={}", province_id, day, num, v, ip, icntvId, oldNum);
+            jedis.set(day, num + v + "");
+            jedis.lpush(userPushKey, ip + "-" + v);
+
+            jedis.hset(userHsetKey, province_id, (Ints.tryParse(oldNum) + v) + "");
+        }
+
+        return false;
+    }
+
+    @Override
+    public void execute(final String msg) throws Exception {
+        logger.info("storm msg ={}", msg);
+        Redis.execute(new IRedisCache<Boolean>() {
+            @Override
+            public Boolean callBack(Jedis jedis) throws CacheExecption {
+                return innerExecute(msg, jedis);
+            }
         });
     }
+
 }

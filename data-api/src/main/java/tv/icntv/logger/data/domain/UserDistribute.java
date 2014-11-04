@@ -1,4 +1,4 @@
-package tv.icntv.consumer.hdfs;/*
+package tv.icntv.logger.data.domain;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,29 +17,35 @@ package tv.icntv.consumer.hdfs;/*
  * under the License.
  */
 
-import kafka.consumer.KafkaStream;
-import tv.icntv.consumer.Consumer;
-import tv.icntv.consumer.hdfs.utils.FileUtils;
-
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/10/29
- * Time: 09:55
+ * Date: 2014/11/03
+ * Time: 17:40
  */
-public class HdfsConsumer extends Consumer {
-    FileUtils fileUtils = null;
+public class UserDistribute {
+    private String key;
+    private String value;
 
-    public HdfsConsumer(KafkaStream stream) {
-        super(stream);
-        fileUtils = new FileUtils();
+    public UserDistribute(String key, String value) {
+        this.key = key;
+        this.value = value;
     }
 
-    @Override
-    public void execute(String msg) throws Exception {
-        fileUtils.write(msg+"\r\n");
-        return;
+    public String getValue() {
+        return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }

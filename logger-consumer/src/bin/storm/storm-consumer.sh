@@ -20,4 +20,4 @@ fi
 # real time msg ->storm:topic =icntv.real.time
 # no real time msg ->hdfs :icntv-hdfs-group or search : icntv-search-group: topic = icntv.no.real.time
 
-java -classpath $CLASSPATH  tv.icntv.consumer.IcntvConsumerGroup  icntv.real.time    4   icntv-storm-group
+java -classpath $CLASSPATH  tv.icntv.consumer.IcntvConsumerGroup  icntv.real.time    4   icntv-storm-group  STORM_CONSUMER

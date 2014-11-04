@@ -46,20 +46,21 @@ import java.util.Properties;
 public class KafkaClient {
     @Inject
     @Named("kafkaTS")
-    private int kafkaThreadSize ;
+    private int kafkaThreadSize;
     private Logger logger = LoggerFactory.getLogger(KafkaClient.class);
-    ProducerConfig producerConfig ;
-    Producer<String,String> producer = null;
+    ProducerConfig producerConfig;
+    Producer<String, String> producer = null;
+
     public KafkaClient() {
         Properties pro = null;
         try {
-            String config=System.getProperty("publish-kafka");
-            if(Strings.isNullOrEmpty(config)){
-                config=  "kafka-producer.properties";
+            String config = System.getProperty("publish-kafka");
+            if (Strings.isNullOrEmpty(config)) {
+                config = "kafka-producer.properties";
             }
-             pro = PropertiesLoaderUtils.loadAllProperties(config);
+            pro = PropertiesLoaderUtils.loadAllProperties(config);
         } catch (IOException e) {
-             logger.error("load config kafka-producer.properties error");
+            logger.error("load config kafka-producer.properties error");
         }
         producerConfig = new ProducerConfig(pro);
 
@@ -68,42 +69,46 @@ public class KafkaClient {
     /**
      * key == topic
      * value == message;
+     *
      * @param kvs
      */
-    public boolean send(Map<String,List<String>> kvs){
+    public boolean send(Map<String, List<String>> kvs) {
 
-        if(null == kvs || kvs.isEmpty()){
+        if (null == kvs || kvs.isEmpty()) {
             logger.info("send kafka msg is null,skip send to kafka ,but this operator return true");
             return true;
         }
         Iterator<String> it = kvs.keySet().iterator();
-        try{
-        while (it.hasNext()){
-            String topic = it.next();
-            send(topic,kvs.get(topic));
-        }
-        }catch (Exception e){
-            logger.error("send kafka msg error:",e);
+        try {
+            while (it.hasNext()) {
+                String topic = it.next();
+//                if(logger.isDebugEnabled()){
+                    logger.info("topic = {} ; msg = {}",topic,kvs.get(topic));
+//                }
+                send(topic, kvs.get(topic));
+            }
+        } catch (Exception e) {
+            logger.error("send kafka msg error:", e);
             return false;
         }
         return true;
     }
 
-    public boolean send(final String topic,List<String> msgs){
+    public boolean send(final String topic, List<String> msgs) {
         producer = new Producer<String, String>(producerConfig);
-        List<KeyedMessage<String,String>> kafkaMsgs=Lists.transform(msgs,new Function<String,KeyedMessage<String,String>>() {
+        List<KeyedMessage<String, String>> kafkaMsgs = Lists.transform(msgs, new Function<String, KeyedMessage<String, String>>() {
             @Override
-            public KeyedMessage<String,String> apply( java.lang.String input) {
-                String ip= Splitter.on("|").limit(6).trimResults().splitToList(input).get(4);
-                return new KeyedMessage<String,String>(topic,ip,input);  //To change body of implemented methods use File | Settings | File Templates.
+            public KeyedMessage<String, String> apply(java.lang.String input) {
+                String ip = Splitter.on("|").limit(6).trimResults().splitToList(input).get(4);
+                return new KeyedMessage<String, String>(topic, ip, input);  //To change body of implemented methods use File | Settings | File Templates.
             }
         });
-        if(logger.isDebugEnabled()){
-            logger.debug("send topic ={},and size={}",topic ,kafkaMsgs.size());
+        if (logger.isDebugEnabled()) {
+            logger.debug("send topic ={},and size={}", topic, kafkaMsgs.size());
         }
         producer.send(kafkaMsgs);
         producer.close();
         return true;
     }
 
- }
+}

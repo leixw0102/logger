@@ -16,6 +16,7 @@
 package tv.icntv.logger.common.cache;
 
 import com.google.common.primitives.Ints;
+import com.google.common.primitives.Longs;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
@@ -53,8 +54,8 @@ public class Redis {
         }
         if(null == jedisPool){
             JedisPoolConfig config=new JedisPoolConfig();
-//            config.setm.setMaxActive(propertiesUtils.getInt(REDIS_MAXACTIVE));
-//            config.setMaxWait(propertiesUtils.getInt(REDIS_MAXWAIT));
+            config.setMaxTotal(Ints.tryParse(propertiesUtils.getProperty(REDIS_MAXACTIVE)));
+            config.setMaxWaitMillis(Longs.tryParse(propertiesUtils.getProperty(REDIS_MAXWAIT)));
             config.setTestOnBorrow(true);
             jedisPool=new JedisPool(config,
                     propertiesUtils.getProperty(REDIS_IP),

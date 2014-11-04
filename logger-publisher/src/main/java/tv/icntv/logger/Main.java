@@ -75,12 +75,12 @@ public class Main {
             }
         });
 
-        IConnection receiver=injector.getInstance(IConnection.class);
-        logger.info("scribe server start..");
-        receiver.start();
+//        IConnection receiver=injector.getInstance(IConnection.class);
+//        logger.info("scribe server start..");
+//        receiver.start();
 
-//        KafkaClient client = injector.getInstance(KafkaClient.class);
-//        client.send("icntv.no.real.time", Lists.newArrayList("123456|ac:sd:dd:dw|23-sdf|2.0.0|23456|231212|232323|1|2|sd|sd|sd|sd"));
+        KafkaClient client = injector.getInstance(KafkaClient.class);
+        client.send("icntv.real.time", Lists.newArrayList("123456789012345|ac:sd:dd:dw|23-sdf|2.0.0|16779264|231212|232323|1|1|sd|sd|sd|sd"));
     }
 
     class ProducerConfig {

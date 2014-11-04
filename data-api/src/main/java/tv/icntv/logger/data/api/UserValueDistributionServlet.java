@@ -1,4 +1,4 @@
-package tv.icntv.consumer.hdfs;/*
+package tv.icntv.logger.data.api;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,29 +17,25 @@ package tv.icntv.consumer.hdfs;/*
  * under the License.
  */
 
-import kafka.consumer.KafkaStream;
-import tv.icntv.consumer.Consumer;
-import tv.icntv.consumer.hdfs.utils.FileUtils;
+import tv.icntv.logger.data.AbstractServlet;
+
+import java.io.PrintWriter;
 
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/10/29
- * Time: 09:55
+ * Date: 2014/11/03
+ * Time: 09:27
  */
-public class HdfsConsumer extends Consumer {
-    FileUtils fileUtils = null;
-
-    public HdfsConsumer(KafkaStream stream) {
-        super(stream);
-        fileUtils = new FileUtils();
+public class UserValueDistributionServlet extends AbstractServlet {
+    @Override
+    protected void sendRandom(PrintWriter writer) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
-    public void execute(String msg) throws Exception {
-        fileUtils.write(msg+"\r\n");
-        return;
+    public void sendRealData(PrintWriter writer) {
+        //To change body of implemented methods use File | Settings | File Templates.
     }
-
 }

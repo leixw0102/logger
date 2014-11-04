@@ -2,7 +2,7 @@
 <configuration>
 	<!--定义日志文件的存储地址 勿在 LogBack 的配置中使用相对路径 -->
 	<property name="LOG_HOME" value="/data/db/log" />
-	<property name="lOG_NAME" value="logger-publisher"></property>
+	<property name="lOG_NAME" value="hdfs-storm.log"></property>
 	<!-- 控制台输出 -->
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<!-- 日志输出编码 -->
@@ -38,8 +38,9 @@
 	<logger name="org.apache.zookeeper.ClientCnxn" level="error"></logger>
     <logger name="o.a.m.c.t.i.model.GenericDataModel" level="error"></logger>
     <logger name="o.a.m.c.t.i.e.AbstractDifferenceRecommenderEvaluator" level="error"></logger>
+    <logger name="utils.VerifiableProperties" level="warn" ></logger>
 	<!-- 日志输出级别 -->
-	<root level="debug">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FILE" />
 	</root>

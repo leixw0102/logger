@@ -26,6 +26,7 @@ import kafka.javaapi.consumer.ConsumerConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tv.icntv.consumer.hdfs.HdfsConsumer;
+import tv.icntv.consumer.storm.RedisConsumer;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
 
 import java.io.IOException;
@@ -50,16 +51,6 @@ public class IcntvConsumerGroup {
     private Logger logger = LoggerFactory.getLogger(IcntvConsumerGroup.class);
 
     private String consumerType;
-
-    private boolean isBatch;
-
-    public boolean isBatch() {
-        return isBatch;
-    }
-
-    public void setBatch(boolean batch) {
-        isBatch = batch;
-    }
 
     public String getTopic() {
         return topic;
@@ -92,7 +83,6 @@ public class IcntvConsumerGroup {
 
     public IcntvConsumerGroup(String topic,int thread,String groupId,boolean isBatch,String consumerType) {
         logger.info("init ....");
-        this.isBatch = isBatch;
         this.consumerType = consumerType;
         Properties properties=null;
         String kafkaFile="";
@@ -101,7 +91,7 @@ public class IcntvConsumerGroup {
             if(Strings.isNullOrEmpty(kafkaFile)){
                 kafkaFile = "consumer.properties";
             }
-            properties = PropertiesLoaderUtils.loadAllProperties("consumer.properties");
+            properties = PropertiesLoaderUtils.loadAllProperties(kafkaFile);
         } catch (IOException e) {
             logger.error("load consumer.properties error");
             return;
@@ -118,6 +108,7 @@ public class IcntvConsumerGroup {
         new ShutDown();
 
     }
+
 
     public void run(){
         logger.info("start thread ...");
@@ -145,13 +136,16 @@ public class IcntvConsumerGroup {
     }
 
     public static void main(String[]args){
-        if(null == args || args.length !=3){
-            return;
-        }
-        IcntvConsumerGroup group = new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2],args[3]);
+        System.out.println(args.length);
+//        if(null == args || args.length !=4){
+//            return;
+//        }
+//        new IcntvConsumerGroup(args[0],Integer.parseInt(args[1]),args[2],args[3]).run();
+//        new IcntvConsumerGroup("icntv.real.time",4,"icntv-storm-group","STORM_CONSUMER").run();
+        new IcntvConsumerGroup("icntv.real.time",4,"icntv-storm-group","STORM_CONSUMER").run();
     }
 
-    enum ConsumerType{
+        enum ConsumerType{
         HDFS_CONSUMER {
             @Override
             public Consumer getConsumer(KafkaStream stream) {
@@ -160,9 +154,14 @@ public class IcntvConsumerGroup {
         },STORM_CONSUMER {
             @Override
             public Consumer getConsumer(KafkaStream stream) {
-                return null;  //To change body of implemented methods use File | Settings | File Templates.
+                return new RedisConsumer(stream);  //To change body of implemented methods use File | Settings | File Templates.
             }
-        };
+        },DEFAULT_CONSUMER {
+                @Override
+                public Consumer getConsumer(KafkaStream stream) {
+                    return null;
+                }
+            };
         public abstract Consumer getConsumer(KafkaStream stream);
     }
 }

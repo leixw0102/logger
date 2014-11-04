@@ -50,6 +50,7 @@ public class Connections {
         Properties properties =null;
         try {
             properties=PropertiesLoaderUtils.loadAllProperties("jdbc.properties");
+            System.out.println(properties.getProperty("jdbc.driverClass")+"\t"+properties.getProperty("jdbc.jdbcUrl")+"\t"+properties.getProperty("jdbc.name")+"\t"+properties.getProperty("jdbc.pwd"));
             Class.forName(properties.getProperty("jdbc.driverClass"));
             BoneCPConfig config = new BoneCPConfig();
             config.setJdbcUrl(properties.getProperty("jdbc.jdbcUrl"));
