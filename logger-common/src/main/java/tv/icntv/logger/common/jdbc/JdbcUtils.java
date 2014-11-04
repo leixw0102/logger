@@ -31,7 +31,6 @@ import java.sql.SQLException;
  */
 public class JdbcUtils {
     public static String getResultForSql(String sql) {
-        System.out.println(sql);
         Connection connection = null;
         PreparedStatement pst = null;
         ResultSet set = null;

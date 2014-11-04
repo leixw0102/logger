@@ -55,6 +55,10 @@ public class RedisConsumer extends Consumer {
         String action = splitValues.get(8);
         String ip = splitValues.get(4);
         Long ipLong = 0L;
+        if(Strings.isNullOrEmpty(icntvId)){
+            logger.error("icntvId null,this log is error");
+            return false;
+        }
         if (ip.contains(".")) {
             ipLong = IpUtils.ipStrToLong(ip);
         } else {
