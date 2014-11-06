@@ -26,15 +26,16 @@ import com.google.inject.name.Named;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
-import org.apache.thrift.server.THsHaServer;
 import org.apache.thrift.server.TServer;
-import org.apache.thrift.transport.TFramedTransport;
-import org.apache.thrift.transport.TNonblockingServerSocket;
-import org.apache.thrift.transport.TNonblockingServerTransport;
+import org.apache.thrift.server.TThreadPoolServer;
+import org.apache.thrift.transport.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tv.icntv.logger.common.IpUtils;
+import tv.icntv.logger.common.ThreadLocalIpUtils;
 import tv.icntv.logger.msg.receive.IConnection;
 
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 
@@ -50,10 +51,10 @@ public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
 
     private TServer server;
-
+    Startup startupThread = null;
     @Override
     public void start() {
-        Startup startupThread = new Startup();
+        startupThread= new Startup();
         startupThread.start();
     }
 
@@ -82,9 +83,8 @@ public class ScribeServer implements IConnection {
             if(LOG.isDebugEnabled()){
                 LOG.debug("receive ...."+messages.size());
             }
-
             //parser scribe log and receive
-            boolean result = receiveAndSend.receiveAndSend(messages);
+            boolean result = receiveAndSend.receiveAndSend(messages,startupThread.get());
 
             LOG.info("send kafka result ={}",result);
             return result?ResultCode.OK:ResultCode.TRY_LATER;
@@ -155,20 +155,57 @@ public class ScribeServer implements IConnection {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     }
-    private class Startup extends Thread {
-
+    private  class Startup extends Thread {
+        private ThreadLocal<String> local = new ThreadLocal<String>();
+        public  void set(String ip){
+            local.set(ip);
+        }
+        public  String get(){
+            return local.get();
+        }
+        public  void remove() {
+            local.remove();
+        }
         public void run() {
             try {
                 TProcessor processor = new scribe.Processor(new Receiver());
-                TNonblockingServerTransport transport = new TNonblockingServerSocket(port);
-                THsHaServer.Args args = new THsHaServer.Args(transport);
-
-                args.workerThreads(workers);
+                TServerTransport  transport = new TServerSocket (port);
+//                THsHaServer.Args args = new THsHaServer.Args(transport);
+                TThreadPoolServer.Args args = new TThreadPoolServer.Args(transport);
+                args.maxWorkerThreads(workers);
                 args.processor(processor);
-                args.transportFactory(new TFramedTransport.Factory());
-                args.protocolFactory(new TBinaryProtocol.Factory());
 
-                server = new THsHaServer(args);
+//                args.transportFactory(new TFramedTransport.Factory());
+                args.protocolFactory(new TBinaryProtocol.Factory());
+                args.outputTransportFactory(new TFramedTransport.Factory());
+                args.inputTransportFactory(new TFramedTransport.Factory() {
+                    @Override
+                    public TTransport getTransport(TTransport base) {
+                       if(base instanceof TSocket) {
+                            TSocket tSocket = (TSocket) base;
+                            if(tSocket != null) {
+
+                                InetSocketAddress  remoteAddr = (InetSocketAddress)tSocket.getSocket().getRemoteSocketAddress();
+                                LOG.info("ip:port ={},long={}",remoteAddr.getAddress(), IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()));
+                                set(remoteAddr.getAddress().getHostAddress());
+//                                ThreadLocalIpUtils.set(remoteAddr.getAddress().getHostAddress());
+                            }
+                        }
+
+                        return new TFramedTransport(base) {
+                            @Override
+                            public void close() {
+                                if(LOG.isDebugEnabled()){
+                                    LOG.debug(".....................close");
+                                }
+//                                ThreadLocalIpUtils.remove();
+                                remove();
+                                super.close();
+                            }
+                        };
+                    }
+                });
+                server = new TThreadPoolServer(args);
 
                 LOG.info("Starting Scribe Source on port ={},start thread size={}" , port,workers);
 

@@ -41,7 +41,7 @@ public class KafkaMsgTest extends Test {
         LogEntry entry = new LogEntry();
         entry.setCategory(CategoryEnum.REALTIME.toString());
         entry.setMessage(realTimeMsg);
-        Map<String,List<String>> maps = process.msgChange(Lists.newArrayList(entry));
+        Map<String,List<String>> maps = process.msgChange(Lists.newArrayList(entry),"");
         assertNotNull(maps);
         assertEquals("icntv.real.time",maps.keySet().iterator().next());
         assertEquals(1,maps.get("icntv.real.time").size());
@@ -53,7 +53,7 @@ public class KafkaMsgTest extends Test {
         LogEntry entry = new LogEntry();
         entry.setCategory(CategoryEnum.NOREALTIME.toString());
         entry.setMessage(noRealTimeMsg);
-        Map<String,List<String>> maps = process.msgChange(Lists.newArrayList(entry));
+        Map<String,List<String>> maps = process.msgChange(Lists.newArrayList(entry),"");
         assertNotNull(maps);
         assertEquals("icntv.no.real.time",maps.keySet().iterator().next());
         assertEquals(2,maps.get("icntv.no.real.time").size());

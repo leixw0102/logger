@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg;/*
+package tv.icntv.logger.common;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,25 +17,22 @@ package tv.icntv.logger.msg;/*
  * under the License.
  */
 
-import tv.icntv.logger.exception.ReceiveExpetion;
-import tv.icntv.logger.msg.receive.IReceiver;
-import tv.icntv.logger.msg.send.ISender;
-
-import java.util.List;
-
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/26
- * Time: 11:01
+ * Date: 2014/11/05
+ * Time: 09:34
  */
-public interface IReceiverSender<I,O> extends IReceiver ,ISender{
-    /**
-     *
-     * @throws tv.icntv.logger.exception.ReceiveExpetion
-     */
-    public boolean receiveAndSend(List<I> message) throws ReceiveExpetion;
-
-    public boolean receiveAndSend(List<I> messages,String ip) throws ReceiveExpetion;
+public class ThreadLocalIpUtils {
+    private static ThreadLocal<String> ipLocal = new ThreadLocal<String>();
+    public static void set(String ip){
+        ipLocal.set(ip);
+    }
+    public static String get(){
+        return ipLocal.get();
+    }
+    public static void remove() {
+        ipLocal.remove();
+    }
 }

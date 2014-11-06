@@ -1,4 +1,4 @@
-package tv.icntv.logger.msg;/*
+package tv.icntv.consumer.hdfs.utils;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,25 +17,21 @@ package tv.icntv.logger.msg;/*
  * under the License.
  */
 
-import tv.icntv.logger.exception.ReceiveExpetion;
-import tv.icntv.logger.msg.receive.IReceiver;
-import tv.icntv.logger.msg.send.ISender;
-
-import java.util.List;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
+import tv.icntv.sender.HdfsModule;
 
 /**
  * Created by leixw
  * <p/>
  * Author: leixw
- * Date: 2014/09/26
- * Time: 11:01
+ * Date: 2014/11/04
+ * Time: 16:17
  */
-public interface IReceiverSender<I,O> extends IReceiver ,ISender{
-    /**
-     *
-     * @throws tv.icntv.logger.exception.ReceiveExpetion
-     */
-    public boolean receiveAndSend(List<I> message) throws ReceiveExpetion;
-
-    public boolean receiveAndSend(List<I> messages,String ip) throws ReceiveExpetion;
+public class SendUtils {
+    public static Thread getSendThread(String ...args){
+        HdfsModule hdfsModule = new HdfsModule(args);
+        Injector injector = Guice.createInjector(hdfsModule);
+        return new Thread(injector.getInstance(Runnable.class));
+    }
 }

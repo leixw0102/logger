@@ -24,8 +24,11 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import tv.icntv.logger.common.IpUtils;
+import tv.icntv.logger.common.ThreadLocalIpUtils;
 import tv.icntv.logger.msg.receive.CategoryEnum;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +51,7 @@ public class MsgProcess extends AbstractReceiverAndSender  {
     }
 
     @Override
-    public Map<String,List<String>> msgChange(List<LogEntry> msgs) {
+    public Map<String,List<String>> msgChange(List<LogEntry> msgs,String ip) {
         Map<String,List<String>> kvs = new HashMap<String, List<String>>();
         if(logger.isDebugEnabled()){
             logger.debug("scribe receive msgs size={}",msgs.size());
@@ -62,12 +65,14 @@ public class MsgProcess extends AbstractReceiverAndSender  {
                 logger.error("scribe msg category ={};but is not icntv log defined ",logEntry.category);
                 continue;
             }
+            if(Strings.isNullOrEmpty(ip) || !ip.contains(".")){
+                ip= "127.0.0.1";
+            }
             String topic=categoryEnum.getKafkaTopic();
             String msg=logEntry.getMessage();
-            // msg split
-            if(logger.isDebugEnabled()){
-                logger.debug("topic={};msg={}",topic,msg);
-            }
+
+            msg = MessageFormat.format(msg, IpUtils.ipStrToLong(ip)+"");
+
             List<String> values=Splitter.on(split).trimResults().limit(7).splitToList(msg);
             String contents=values.get(6);
             if(Strings.isNullOrEmpty(contents)){

@@ -82,7 +82,9 @@ public class FileUtils implements Constant{
 				String tempName=String.format(fileFormat, current,current);
 
 				setFileName(tmp+File.separator+tempName); //baseFileName+getCurrentDate()+"-"+String.format("%tH",new Date()) +suffix
-				logger.info("set basename from "+currentFile+" to "+getFileName());
+				if(logger.isDebugEnabled()){
+                    logger.debug("set basename from "+currentFile+" to "+getFileName());
+                }
 			}
 		}, 0, rollInterval, TimeUnit.HOURS);
 		try {
@@ -101,6 +103,7 @@ public class FileUtils implements Constant{
 				if(!currentFile.equals(getFileName())){
 					if(!currentFile.equals("")){
 						logger.info("start compress and send to hdfs");
+//                        SendUtils.getSendThread(currentFile,lzoPath+File.separator+getCurrentDate(),hdfs+File.separator+getCurrentDate(),"LZO_COMPRESS","UN_COMPRESS_NONE").start();
 						//new ClientThread(currentFile,lzoPath+File.separator+day(),hdfs+File.separator+day()).start();;
 					}
 					currentFile=getFileName();

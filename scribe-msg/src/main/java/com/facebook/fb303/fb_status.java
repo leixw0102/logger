@@ -6,6 +6,10 @@
 package com.facebook.fb303;
 
 
+import java.util.Map;
+import java.util.HashMap;
+import org.apache.thrift.TEnum;
+
 /**
  * Common status reporting mechanism across all services
  */

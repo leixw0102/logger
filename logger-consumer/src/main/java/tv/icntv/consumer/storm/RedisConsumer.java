@@ -24,8 +24,8 @@ import com.google.common.primitives.Longs;
 import kafka.consumer.KafkaStream;
 import redis.clients.jedis.Jedis;
 import tv.icntv.consumer.Consumer;
-import tv.icntv.consumer.utils.IpUtils;
 import tv.icntv.logger.common.DateUtils;
+import tv.icntv.logger.common.IpUtils;
 import tv.icntv.logger.common.cache.IRedisCache;
 import tv.icntv.logger.common.cache.Redis;
 import tv.icntv.logger.common.exception.CacheExecption;
@@ -122,7 +122,7 @@ public class RedisConsumer extends Consumer {
 
     @Override
     public void execute(final String msg) throws Exception {
-        logger.info("storm msg ={}", msg);
+//        logger.info("storm msg ={}", msg);
         Redis.execute(new IRedisCache<Boolean>() {
             @Override
             public Boolean callBack(Jedis jedis) throws CacheExecption {

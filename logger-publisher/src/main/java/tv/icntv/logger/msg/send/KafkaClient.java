@@ -82,9 +82,9 @@ public class KafkaClient {
         try {
             while (it.hasNext()) {
                 String topic = it.next();
-//                if(logger.isDebugEnabled()){
-                    logger.info("topic = {} ; msg = {}",topic,kvs.get(topic));
-//                }
+                if (logger.isDebugEnabled()) {
+                    logger.debug("topic = {} ; msg = {}", topic, kvs.get(topic));
+                }
                 send(topic, kvs.get(topic));
             }
         } catch (Exception e) {
@@ -94,20 +94,29 @@ public class KafkaClient {
         return true;
     }
 
+
     public boolean send(final String topic, List<String> msgs) {
         producer = new Producer<String, String>(producerConfig);
-        List<KeyedMessage<String, String>> kafkaMsgs = Lists.transform(msgs, new Function<String, KeyedMessage<String, String>>() {
-            @Override
-            public KeyedMessage<String, String> apply(java.lang.String input) {
-                String ip = Splitter.on("|").limit(6).trimResults().splitToList(input).get(4);
-                return new KeyedMessage<String, String>(topic, ip, input);  //To change body of implemented methods use File | Settings | File Templates.
+        try {
+            List<KeyedMessage<String, String>> kafkaMsgs = Lists.transform(msgs, new Function<String, KeyedMessage<String, String>>() {
+                @Override
+                public KeyedMessage<String, String> apply(java.lang.String input) {
+                    String ip = Splitter.on("|").limit(6).trimResults().splitToList(input).get(4);
+                    return new KeyedMessage<String, String>(topic, ip, input);  //To change body of implemented methods use File | Settings | File Templates.
+                }
+            });
+            if (logger.isDebugEnabled()) {
+                logger.debug("send topic ={},and size={}", topic, kafkaMsgs.size());
             }
-        });
-        if (logger.isDebugEnabled()) {
-            logger.debug("send topic ={},and size={}", topic, kafkaMsgs.size());
+            producer.send(kafkaMsgs);
+
+        } catch (Exception e) {
+            logger.error("send kafka error ..",e);
+            return false;
+        } finally {
+            producer.close();
         }
-        producer.send(kafkaMsgs);
-        producer.close();
+
         return true;
     }
 

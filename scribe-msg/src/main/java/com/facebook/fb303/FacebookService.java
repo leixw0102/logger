@@ -5,10 +5,20 @@
  */
 package com.facebook.fb303;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.EnumMap;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.EnumSet;
+import java.util.Collections;
+import java.util.BitSet;
+import java.nio.ByteBuffer;
+import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
 
 public class FacebookService {
 
@@ -2263,7 +2273,7 @@ public class FacebookService {
 
     /**
      * 
-     * @see com.facebook.fb303.fb_status
+     * @see fb_status
      */
     public fb_status success; // required
 
@@ -2271,7 +2281,7 @@ public class FacebookService {
     public enum _Fields implements org.apache.thrift.TFieldIdEnum {
       /**
        * 
-       * @see com.facebook.fb303.fb_status
+       * @see fb_status
        */
       SUCCESS((short)0, "success");
 
@@ -2370,7 +2380,7 @@ public class FacebookService {
 
     /**
      * 
-     * @see com.facebook.fb303.fb_status
+     * @see fb_status
      */
     public fb_status getSuccess() {
       return this.success;
@@ -2378,7 +2388,7 @@ public class FacebookService {
 
     /**
      * 
-     * @see com.facebook.fb303.fb_status
+     * @see fb_status
      */
     public getStatus_result setSuccess(fb_status success) {
       this.success = success;

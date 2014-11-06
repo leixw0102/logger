@@ -46,7 +46,7 @@ public class Main {
     private static String SCRIBE_PORT="port";
     private static String KAFKA_PRODUCER_THREAD_NAME="kafkaTS";
     private static final int DEFAULT_WORKERS = 10;
-    private static final int DEFAULT_PORT=14630;
+    private static final int DEFAULT_PORT=1463;
     private static final int DEFAULT_KAFKA_SIZE=10;
     private static Logger logger = LoggerFactory.getLogger(Main.class);
     public static void main( String[]args) throws Exception {
@@ -75,12 +75,12 @@ public class Main {
             }
         });
 
-//        IConnection receiver=injector.getInstance(IConnection.class);
-//        logger.info("scribe server start..");
-//        receiver.start();
+        IConnection receiver=injector.getInstance(IConnection.class);
+        logger.info("scribe server start..");
+        receiver.start();
 
-        KafkaClient client = injector.getInstance(KafkaClient.class);
-        client.send("icntv.real.time", Lists.newArrayList("123456789012345|ac:sd:dd:dw|23-sdf|2.0.0|16779264|231212|232323|1|1|sd|sd|sd|sd"));
+//        KafkaClient client = injector.getInstance(KafkaClient.class);
+//        client.send("icntv.real.time", Lists.newArrayList("123456789012345|ac:sd:dd:dw|23-sdf|2.0.0|16779264|231212|232323|1|1|sd|sd|sd|sd"));
     }
 
     class ProducerConfig {

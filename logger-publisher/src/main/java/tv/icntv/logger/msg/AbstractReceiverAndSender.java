@@ -67,21 +67,26 @@ public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEn
     }
 
     @Override
-    public boolean receiveAndSend(List<LogEntry> message) throws ReceiveExpetion {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public boolean receiveAndSend(List<LogEntry> messages, String ip) throws ReceiveExpetion {
 
         //message change
         if(logger.isDebugEnabled()){
             logger.debug("start transfer msg to kafka msg");
         }
-        final Map<String,List<String>> msgs=msgChange(message);
+        final Map<String,List<String>> msgs=msgChange(messages,ip);
         if(logger.isDebugEnabled()){
             logger.debug("kafka msg generated,start send to kafka ");
         }
 
         return  client.send(msgs);
     }
-    public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs);
+
+    @Override
+    public boolean receiveAndSend(List<LogEntry> message) throws ReceiveExpetion {
+        //To change body of implemented methods use File | Settings | File Templates.
+        return receiveAndSend(message,"127.0.0.1");
+    }
+    public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs,String ip);
 
     public void setClient(KafkaClient client) {
         this.client = client;

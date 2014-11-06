@@ -1,4 +1,4 @@
-package tv.icntv.consumer.utils;/*
+package tv.icntv.logger.common;/*
  * Copyright 2014 Future TV, Inc.
  *
  * The contents of this file are subject to the terms
@@ -17,13 +17,8 @@ package tv.icntv.consumer.utils;/*
  * under the License.
  */
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.Date;
-import java.util.List;
 
 /**
  * Created by leixw
@@ -59,8 +54,8 @@ public class IpUtils {
     }
 
     public static void main(String[]args) throws IOException {
-//        System.out.println(ipStrToLong("221.14.122.0"));
-//        System.out.println(iplongToIp(3708713472L));
+        System.out.println(ipStrToLong("123.150.146.2"));
+        System.out.println(iplongToIp(3708713472L));
 //        List<String> lines = Files.readLines(new File("D:\\Query_Result.txt"), Charsets.UTF_8);
 //        StringBuffer sb = new StringBuffer();
 //        for(int i=0;i<lines.size();i++){
