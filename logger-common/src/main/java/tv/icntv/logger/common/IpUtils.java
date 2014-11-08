@@ -63,6 +63,6 @@ public class IpUtils {
 //
 //        }
 //        Files.write(sb.toString(),new File("D:\\city.txt"),Charsets.UTF_8);
-        System.out.println(new Date().getTime());
+        System.out.println(new Date(1415259481230L).toLocaleString());
     }
 }

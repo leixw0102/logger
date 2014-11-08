@@ -15,11 +15,15 @@ package tv.icntv.logger.common;/*
  */
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by leixw
@@ -64,8 +68,39 @@ public class DateUtils {
         return DateTime.now().toString(format);
     }
 
+    public static DateTime getDay(int days){
+        return DateTime.now().plusDays(days);
+    }
+
+    public static DateTime getPlusMonth(int month){
+        return DateTime.now().plusMonths(month);
+    }
+
+    public static List<String> getDay(DateTime start,DateTime end,String format){
+        List<String> list = Lists.newArrayList();
+        int days = Days.daysBetween(start,end).getDays();
+        for(int i=0;i<=days;i++){
+            list.add(start.plusDays(1).toString(format));
+        }
+        return list;
+    }
+
     public static void main(String []args){
 //        System.out.println(getFormatDate("2014-10-22 00:32:21",defaultFormat,DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss")));
-        System.out.println(getDay("yyyy-MM-dd"));
+        DateTime dateTime = DateTime.now();
+        DateTime end = DateTime.now().plusMonths(-1);
+        for(int i=0;i<Days.daysBetween(end,dateTime).getDays();i++){
+            System.out.println(end.plusDays(i).toLocalDate());
+
+        }
+//        System.out.println(dateTime.toLocalDate() + "\t"+end.toLocalDate());
+//        Period p = new Period(DateTime.now().plusMonths(-1),dateTime);
+//        Days days = Days.daysBetween(end,dateTime);
+//        days.getDays();
+//        while (true){
+//            Days days1 = days.dividedBy(1);
+//            System.out.println(days1.toString());
+//        }
+//        Days.daysBetween()
     }
 }

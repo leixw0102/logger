@@ -12,6 +12,7 @@
         <module>logger-publisher</module>
         <module>logger-consumer</module>
         <module>data-api</module>
+        <module>user-value</module>
     </modules>
     <properties>
         <lib.thrift>0.7.0</lib.thrift>
@@ -27,7 +28,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.build.timestamp.format>yyyy-MM-dd</maven.build.timestamp.format>
         <dev.build.timestamp>${maven.build.timestamp}</dev.build.timestamp>
-
+        <hadoop.version>2.2.0</hadoop.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -95,6 +96,31 @@
                 <groupId>net.sf.jopt-simple</groupId>
                 <artifactId>jopt-simple</artifactId>
                 <version>4.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-common</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-hdfs</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-mapreduce-client-jobclient</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-mapreduce-client-core</artifactId>
+                <version>${hadoop.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.hadoop</groupId>
+                <artifactId>hadoop-minicluster</artifactId>
+                <version>${hadoop.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

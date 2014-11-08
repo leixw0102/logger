@@ -1,0 +1,66 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<!-- Put site-specific property overrides in this file. -->
+
+<configuration>
+
+	<property>
+        <name>pay.weight</name>
+        <value>0.403</value>
+	</property>
+    <property>
+        <name>favorites.weight</name>
+        <value>0.244</value>
+    </property>
+    <property>
+        <name>browse.weight</name>
+        <value>0.137</value>
+    </property>
+    <property>
+        <name>search.weight</name>
+        <value>0.137</value>
+    </property>
+    <property>
+        <name>timelong.weight</name>
+        <value>0.079</value>
+    </property>
+    <!--day -->
+
+    <property>
+        <name>user.value.day.format</name>
+        <value>yyyy-MM-dd</value>
+    </property>
+
+    <property>
+        <name>user.value.before.month</name>
+        <value>-1</value>
+    </property>
+
+    <!-- path -->
+    <property>
+        <name>user.value.input.path</name>
+        <value>/icntv/parser/stb/cdnAdapter/result/</value>
+    </property>
+    <property>
+        <name>user.value.output.middle.path</name>
+        <value>/icntv/user/value/middle/</value>
+    </property>
+    <property>
+        <name>user.value.output.path</name>
+        <value>/icntv/user/value/result/</value>
+    </property>
+    <!-- 预测 -->
+    <property>
+        <name>prediction.weight</name>
+        <value>0.3</value>
+    </property>
+    <property>
+        <name>prediction.ratio</name>
+        <value>1.2</value>
+    </property>
+    <property>
+        <name>reality.weight</name>
+        <value>0.7</value>
+    </property>
+</configuration>
