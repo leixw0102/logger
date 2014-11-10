@@ -52,33 +52,52 @@ public class AverageMapper extends Mapper<LongWritable,Text,Text,IntWritable> {
     private String get(int r){
 
         if(r>=80){
-            return "80以上";
+            return "80-100";
         }
 
         if(r>=70){
-            return "70";
+            return "70-80";
         }
 
         if(r>=60){
-            return "60";
+            return "60-70";
         }
 
         if(r>=50){
-            return "50";
+            return "50-60";
         }
 
         if(r>=40){
-             return "40";
+             return "40-50";
         }
-        if(r>30){
-            return "30";
+        if(r>=30){
+            return "30-40";
         }
         if(r>=20){
-            return "20";
+            return "20-30";
         }
         if(r>=10){
-            return "10";
+            return "10-20";
         }
-        return "10以内";
+        if(r>=5){
+            return "5-10";
+        }
+        if(r>=2){
+            return "2-5";
+        }
+        if(r>=1){
+            return "1-2";
+        }
+        if(r>=0.5){
+            return "0.5-1";
+        }
+        if(r>=0.2){
+            return "0.2-0.5";
+        }
+
+        if(r>=0.1){
+            return "0.1-0.2";
+        }
+        return "0.0-0.1";
     }
 }
