@@ -100,7 +100,7 @@ public class RedisConsumer extends Consumer {
             if (jedis.exists(day)) {
                 num = Longs.tryParse(jedis.get(day));
             }
-            if (num != 0 && num + v <= 0) {
+            if (num != 0 && num + v < 0) {
                 logger.info(" total num <0");
                 return false;
             }
