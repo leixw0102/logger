@@ -21,6 +21,7 @@ import com.facebook.fb303.fb_status;
 import com.facebook.generate.LogEntry;
 import com.facebook.generate.ResultCode;
 import com.facebook.generate.scribe;
+import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.thrift.TException;
@@ -49,7 +50,6 @@ import java.util.Map;
 */
 public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
-
     private TServer server;
     Startup startupThread = null;
     @Override
@@ -81,7 +81,7 @@ public class ScribeServer implements IConnection {
         @Override
         public ResultCode Log(List<LogEntry> messages) throws TException {
             if(LOG.isDebugEnabled()){
-                LOG.debug("receive ...."+messages.size());
+                LOG.debug("receive ...."+messages.size()+"\t"+startupThread.get());
             }
             //parser scribe log and receive
             boolean result = receiveAndSend.receiveAndSend(messages,startupThread.get());
@@ -186,7 +186,7 @@ public class ScribeServer implements IConnection {
                             if(tSocket != null) {
 
                                 InetSocketAddress  remoteAddr = (InetSocketAddress)tSocket.getSocket().getRemoteSocketAddress();
-                                LOG.info("ip:port ={},long={}",remoteAddr.getAddress(), IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()));
+                                LOG.info("ip:port ={},long={},thread id={}",remoteAddr.getAddress(), IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()),Thread.currentThread().getId());
                                 set(remoteAddr.getAddress().getHostAddress());
 //                                ThreadLocalIpUtils.set(remoteAddr.getAddress().getHostAddress());
                             }
@@ -212,6 +212,7 @@ public class ScribeServer implements IConnection {
                 server.serve();
             } catch (Exception e) {
                 LOG.warn("Scribe failed", e);
+                this.stop();
             }
         }
     }

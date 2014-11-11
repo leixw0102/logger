@@ -54,7 +54,7 @@ public class MsgProcess extends AbstractReceiverAndSender  {
     public Map<String,List<String>> msgChange(List<LogEntry> msgs,String ip) {
         Map<String,List<String>> kvs = new HashMap<String, List<String>>();
         if(logger.isDebugEnabled()){
-            logger.debug("scribe receive msgs size={}",msgs.size());
+            logger.debug("scribe receive msgs size={},ip={}",msgs.size(),ip);
         }
         for(LogEntry logEntry : msgs){
             // scribe category --> kafka topic
@@ -65,7 +65,8 @@ public class MsgProcess extends AbstractReceiverAndSender  {
                 logger.error("scribe msg category ={};but is not icntv log defined ",logEntry.category);
                 continue;
             }
-            if(Strings.isNullOrEmpty(ip) || !ip.contains(".")){
+            if(Strings.isNullOrEmpty(ip) ){
+                logger.error("ip ={} null,but set ip =127.0.0.1",ip);
                 ip= "127.0.0.1";
             }
             String topic=categoryEnum.getKafkaTopic();

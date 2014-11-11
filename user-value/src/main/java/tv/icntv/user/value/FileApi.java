@@ -14,6 +14,7 @@ package tv.icntv.user.value;/*
  *      limitations under the License.
  */
 
+import com.google.common.collect.Maps;
 import com.google.common.primitives.Doubles;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
@@ -24,6 +25,7 @@ import org.apache.hadoop.io.IOUtils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 
 /**
  * Created by leixw
@@ -71,6 +73,40 @@ public class FileApi  {
             IOUtils.closeStream(fileSystem);
         }
     }
+
+    public static synchronized Map<String,String> getMaps(Path path){
+        FileSystem fileSystem=null;
+        BufferedReader reader=null;
+        Map<String,String> maps = Maps.newHashMap();
+        try{
+            fileSystem=FileSystem.get(conf);
+//
+            FileStatus[] fileStatuses=fileSystem.listStatus(path);
+            if(null == fileStatuses||fileStatuses.length==0){
+                System.out.println("null...");
+                return null;
+            }
+            Double result = 0.0;
+            for(FileStatus status:fileStatuses){
+                reader=new BufferedReader(new InputStreamReader(fileSystem.open(status.getPath()),"utf-8"));
+
+                String line=null;
+                while(null != (line=reader.readLine())){
+                    String[] str = line.split("\t");
+                    maps.put(str[0],str[1]);
+                }
+            }
+            return maps;
+        }catch (IOException e){
+            System.out.println(e);
+            e.printStackTrace();
+            return null;
+        }finally {
+            IOUtils.closeStream(reader);
+            IOUtils.closeStream(fileSystem);
+        }
+    }
+
     public static void main(String[]args){
 //        Double r=writeDat(new Path[]{new Path("/icntv/user/value/2014-11-08/")});
 //        System.out.println(r);

@@ -13,8 +13,8 @@
             <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
-            <directory>src/main/config</directory>
-            <outputDirectory>config</outputDirectory>
+            <directory>src/main/module/storm</directory>
+            <outputDirectory>resources</outputDirectory>
         </fileSet>
     </fileSets>
     <dependencySets>

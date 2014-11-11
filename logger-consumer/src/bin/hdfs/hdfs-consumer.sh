@@ -10,15 +10,15 @@ done
 echo $CLASSPATH
 
 if [ -z "$CONSUMER_LOG4J_OPTS" ]; then
-  CONSUMER_LOG4J_OPTS="-Dconsumer-logback=%BASE_DIR%\resources\logback.xml "
+  CONSUMER_LOG4J_OPTS="-Dconsumer-logback=$base_dir\resources\logback.xml "
 fi
 
 if [ -z "$CONSUMER_KAFKA_OPTS" ]; then
-  CONSUMER_KAFKA_OPTS="-Dconsumer-kafka=%BASE_DIR%\resources\consumer.xml "
+  CONSUMER_KAFKA_OPTS="-Dconsumer-kafka=$base_dir\resources\consumer.properties "
 fi
 
 if [ -z "$CONSUMER_HDFS_STRATEGY_OPTS" ]; then
-  CONSUMER_HDFS_STRATEGY_OPTS="-Dconsumer-hdfs-icntv=%BASE_DIR%\resources\icntvStb.properties "
+  CONSUMER_HDFS_STRATEGY_OPTS="-Dconsumer-hdfs-icntv=$base_dir\resources\icntvStb.properties "
 fi
 
 # Which java to use

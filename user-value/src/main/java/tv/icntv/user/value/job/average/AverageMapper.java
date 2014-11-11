@@ -55,49 +55,46 @@ public class AverageMapper extends Mapper<LongWritable,Text,Text,IntWritable> {
             return "80-100";
         }
 
-        if(r>=70){
-            return "70-80";
-        }
-
         if(r>=60){
-            return "60-70";
-        }
-
-        if(r>=50){
-            return "50-60";
+            return "60-80";
         }
 
         if(r>=40){
-             return "40-50";
-        }
-        if(r>=30){
-            return "30-40";
-        }
-        if(r>=20){
-            return "20-30";
-        }
-        if(r>=10){
-            return "10-20";
-        }
-        if(r>=5){
-            return "5-10";
-        }
-        if(r>=2){
-            return "2-5";
-        }
-        if(r>=1){
-            return "1-2";
-        }
-        if(r>=0.5){
-            return "0.5-1";
-        }
-        if(r>=0.2){
-            return "0.2-0.5";
+             return "40-60";
         }
 
-        if(r>=0.1){
-            return "0.1-0.2";
+        if(r>=20){
+            return "20-40";
         }
-        return "0.0-0.1";
+
+        if(r>=5){
+            return "5-20";
+        }
+
+        if(r>=1){
+            return "1-5";
+        }
+
+        if(r>=0.2){
+            return "0.2-1";
+        }
+
+        if(r>=0.05){
+            return "0.05-0.2";
+        }
+
+        if(r>=0.005){
+            return "0.005-0.05";
+        }
+        if(r>=0.0005){
+            return "0.0005-0.005";
+        }
+        if(r>=0.00005){
+            return "0.00005-0.0005";
+        }
+        if(r>=0.000005){
+            return "0.000005-0.00005";
+        }
+        return "0.0-0.000005";
     }
 }

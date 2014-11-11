@@ -19,11 +19,13 @@ package tv.icntv.logger.data.api;/*
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
-import org.apache.hadoop.fs.Path;
+import redis.clients.jedis.Jedis;
 import tv.icntv.logger.common.DateUtils;
+import tv.icntv.logger.common.cache.IRedisCache;
+import tv.icntv.logger.common.cache.Redis;
+import tv.icntv.logger.common.exception.CacheExecption;
 import tv.icntv.logger.data.AbstractServlet;
 import tv.icntv.logger.data.domain.UserDistribute;
-import tv.icntv.logger.data.utils.FileApi;
 
 import java.io.PrintWriter;
 import java.util.List;
@@ -38,7 +40,6 @@ import java.util.Set;
  * Time: 09:27
  */
 public class UserValueDistributionServlet extends AbstractServlet {
-    private String path="/icntv/user/value/result/";
     @Override
     protected void sendRandom(PrintWriter writer) {
         //To change body of implemented methods use File | Settings | File Templates.
@@ -46,21 +47,35 @@ public class UserValueDistributionServlet extends AbstractServlet {
 
     @Override
     public void sendRealData(PrintWriter writer) {
-        String day = path+ DateUtils.getDay(-1).toString("yyyy-MM-dd");
-        Map<String,String> maps = FileApi.getMap(new Path(day));
-        if(null ==maps || maps.isEmpty()){
-            day = path + DateUtils.getDay(-2).toString("yyyy-MM-dd");
-        }
-        maps = FileApi.getMap(new Path(day));
-        List<UserDistribute> values = Lists.newArrayList();
-        if(null == maps || maps.isEmpty()){
-            writer.println(JSON.toJSON(new UserDistribute("无数据","0")));
-        }else {
-            Set<String> keys = maps.keySet();
-            for(String key:keys){
-                values.add(new UserDistribute(key,maps.get(key)));
+        final String day = DateUtils.getDay(-1).toString("yyyy-MM-dd");
+        List<UserDistribute> lists=Redis.execute(new IRedisCache<List<UserDistribute>>() {
+            @Override
+            public List<UserDistribute> callBack(Jedis jedis) throws CacheExecption {
+                String key = day + "-u-v-distribute";
+                String key1 = DateUtils.getDay(-2).toString("yyyy-MM-dd");
+                Map<String, String> maps = null;
+                if (jedis.exists(key)) {
+                    maps = jedis.hgetAll(key);
+                } else if (jedis.exists(key1)) {
+                    maps = jedis.hgetAll(key1);
+                }
+                List<UserDistribute> values = Lists.newArrayList();
+                if (null == maps || maps.isEmpty()) {
+                    return null;
+                } else {
+                    Set<String> keys = maps.keySet();
+                    for (String k : keys) {
+                        values.add(new UserDistribute(k, maps.get(k)));
+                    }
+                    return values;
+                }
             }
-            writer.println(JSON.toJSONString(values));
+        });
+        if(null == lists || lists.isEmpty()){
+            writer.println(JSON.toJSONString(new UserDistribute("error","0")));
+        }else {
+            writer.println(JSON.toJSONString(lists));
+
         }
 
     }

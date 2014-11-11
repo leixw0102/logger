@@ -64,6 +64,7 @@ public class RedisConsumer extends Consumer {
         } else {
             ipLong = Longs.tryParse(ip);
         }
+
         if (module.equalsIgnoreCase("1")) {
 
             String province_id = JdbcUtils.getResultForSql("select province_id from ipbase where start<=" + ipLong + " and end >= " + ipLong);
@@ -115,6 +116,8 @@ public class RedisConsumer extends Consumer {
             jedis.lpush(userPushKey, ip + "-" + v);
 
             jedis.hset(userHsetKey, province_id, (Ints.tryParse(oldNum) + v) + "");
+        }else{
+            logger.info("error module msg");
         }
 
         return false;

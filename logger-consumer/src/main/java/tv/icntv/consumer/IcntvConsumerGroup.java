@@ -91,6 +91,7 @@ public class IcntvConsumerGroup {
             if(Strings.isNullOrEmpty(kafkaFile)){
                 kafkaFile = "consumer.properties";
             }
+            logger.info("kafka config path ={}",kafkaFile);
             properties = PropertiesLoaderUtils.loadAllProperties(kafkaFile);
         } catch (IOException e) {
             logger.error("load consumer.properties error");
@@ -136,7 +137,6 @@ public class IcntvConsumerGroup {
     }
 
     public static void main(String[]args){
-        System.out.println(args.length);
 //        if(null == args || args.length !=4){
 //            return;
 //        }

@@ -23,7 +23,11 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ReflectionUtils;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import redis.clients.jedis.Jedis;
 import tv.icntv.logger.common.DateUtils;
+import tv.icntv.logger.common.cache.IRedisCache;
+import tv.icntv.logger.common.cache.Redis;
+import tv.icntv.logger.common.exception.CacheExecption;
 import tv.icntv.user.value.job.UserValueJob;
 import tv.icntv.user.value.job.average.AverageJob;
 
@@ -49,14 +53,25 @@ public class ValueJob extends Configured implements Tool {
         runTool(UserValueJob.class, args);
 
         Configuration configuration = getConf();
-
-        double maxValue=FileApi.getMax(new Path[]{new Path(configuration.get(userValueOutput)+ DateUtils.getDay(-1).toString(configuration.get(userValueFormat)))});
+        final String day = DateUtils.getDay(-1).toString(configuration.get(userValueFormat));
+        double maxValue=FileApi.getMax(new Path[]{new Path(configuration.get(userValueOutput)+ day)});
         configuration.setDouble("user.value.max.value",maxValue);
         System.out.println(configuration.get("outputPath")+"\t max value = "+maxValue);
         super.setConf(configuration);
 
         runTool(AverageJob.class, args);
-
+        //set cache
+        final Map<String,String> maps = FileApi.getMaps(new Path(configuration.get("user.value.output.path")+day));
+        if(null == maps|| maps.isEmpty()){
+            return 0;
+        }
+        Redis.execute(new IRedisCache<Boolean>() {
+            @Override
+            public Boolean callBack(Jedis jedis) throws CacheExecption {
+                jedis.hmset(day+"-u-v-distribute",maps);
+                return true;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
         return 0;  //To change body of implemented methods use File | Settings | File Templates.
     }
 

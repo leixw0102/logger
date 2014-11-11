@@ -17,10 +17,12 @@ package tv.icntv.logger.common.jdbc;/*
  * under the License.
  */
 
+import com.google.common.base.Strings;
 import com.jolbox.bonecp.BoneCP;
 import com.jolbox.bonecp.BoneCPConfig;
 import tv.icntv.logger.common.PropertiesLoaderUtils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -48,8 +50,18 @@ public class Connections {
     static {
 
         Properties properties =null;
+        String jdbcFile="";
         try {
-            properties=PropertiesLoaderUtils.loadAllProperties("jdbc.properties");
+            jdbcFile=System.getProperty("jdbc-config");
+            if(Strings.isNullOrEmpty(jdbcFile)){
+                jdbcFile = "jdbc.properties";
+            }
+            properties = PropertiesLoaderUtils.loadAllProperties(jdbcFile);
+        } catch (IOException e) {
+
+        }
+        try {
+
             System.out.println(properties.getProperty("jdbc.driverClass")+"\t"+properties.getProperty("jdbc.jdbcUrl")+"\t"+properties.getProperty("jdbc.name")+"\t"+properties.getProperty("jdbc.pwd"));
             Class.forName(properties.getProperty("jdbc.driverClass"));
             BoneCPConfig config = new BoneCPConfig();
