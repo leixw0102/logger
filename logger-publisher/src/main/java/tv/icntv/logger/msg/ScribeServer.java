@@ -18,22 +18,23 @@ package tv.icntv.logger.msg;/*
 */
 
 import com.facebook.fb303.fb_status;
-import com.facebook.generate.LogEntry;
-import com.facebook.generate.ResultCode;
-import com.facebook.generate.scribe;
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.apache.thrift.TException;
 import org.apache.thrift.TProcessor;
 import org.apache.thrift.protocol.TBinaryProtocol;
+import org.apache.thrift.protocol.TProtocol;
+import org.apache.thrift.server.ServerContext;
 import org.apache.thrift.server.TServer;
+import org.apache.thrift.server.TServerEventHandler;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scribe.thrift.LogEntry;
+import scribe.thrift.ResultCode;
+import scribe.thrift.scribe;
 import tv.icntv.logger.common.IpUtils;
-import tv.icntv.logger.common.ThreadLocalIpUtils;
 import tv.icntv.logger.msg.receive.IConnection;
 
 import java.net.InetSocketAddress;
@@ -41,20 +42,21 @@ import java.util.List;
 import java.util.Map;
 
 /**
-* Created by leixw
+ * Created by leixw
  * flush num config of scribe server ,then the method  Log of scribe.Iface received .
-* <p/>
-* Author: leixw
-* Date: 2014/09/24
-* Time: 14:10
-*/
+ * <p/>
+ * Author: leixw
+ * Date: 2014/09/24
+ * Time: 14:10
+ */
 public class ScribeServer implements IConnection {
     private static final Logger LOG = LoggerFactory.getLogger(ScribeServer.class);
     private TServer server;
     Startup startupThread = null;
+
     @Override
     public void start() {
-        startupThread= new Startup();
+        startupThread = new Startup();
         startupThread.start();
     }
 
@@ -65,29 +67,31 @@ public class ScribeServer implements IConnection {
     public IReceiverSender getReceiveAndSend() {
         return receiveAndSend;
     }
+
     @Inject
     public void setReceiveAndSend(IReceiverSender receiveAndSend) {
         this.receiveAndSend = receiveAndSend;
     }
 
-    public ScribeServer(@Named("port")Integer port,@Named("workers")Integer workers){
-        this.workers=workers;
-        this.port=port;
+    public ScribeServer(@Named("port") Integer port, @Named("workers") Integer workers) {
+        this.workers = workers;
+        this.port = port;
 
     }
+
     class Receiver implements scribe.Iface {
 
 
         @Override
         public ResultCode Log(List<LogEntry> messages) throws TException {
-            if(LOG.isDebugEnabled()){
-                LOG.debug("receive ...."+messages.size()+"\t"+startupThread.get());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("receive ...." + messages.size() + "\t" + startupThread.get());
             }
             //parser scribe log and receive
-            boolean result = receiveAndSend.receiveAndSend(messages,startupThread.get());
+            boolean result = receiveAndSend.receiveAndSend(messages, startupThread.get());
 
-            LOG.info("send kafka result ={}",result);
-            return result?ResultCode.OK:ResultCode.TRY_LATER;
+            LOG.info("send kafka result ={}", result);
+            return result ? ResultCode.OK : ResultCode.TRY_LATER;
         }
 
         @Override
@@ -155,21 +159,26 @@ public class ScribeServer implements IConnection {
             //To change body of implemented methods use File | Settings | File Templates.
         }
     }
-    private  class Startup extends Thread {
+
+    private class Startup extends Thread {
         private ThreadLocal<String> local = new ThreadLocal<String>();
-        public  void set(String ip){
+
+        public void set(String ip) {
             local.set(ip);
         }
-        public  String get(){
+
+        public String get() {
             return local.get();
         }
-        public  void remove() {
+
+        public void remove() {
             local.remove();
         }
+
         public void run() {
             try {
                 TProcessor processor = new scribe.Processor(new Receiver());
-                TServerTransport  transport = new TServerSocket (port);
+                TServerTransport transport = new TServerSocket(port);
 //                THsHaServer.Args args = new THsHaServer.Args(transport);
                 TThreadPoolServer.Args args = new TThreadPoolServer.Args(transport);
                 args.maxWorkerThreads(workers);
@@ -187,7 +196,7 @@ public class ScribeServer implements IConnection {
 
                                 InetSocketAddress  remoteAddr = (InetSocketAddress)tSocket.getSocket().getRemoteSocketAddress();
                                 LOG.info("ip:port ={},long={},thread id={}",remoteAddr.getAddress(), IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()),Thread.currentThread().getId());
-                                set(remoteAddr.getAddress().getHostAddress());
+                                set(IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress())+"");
 //                                ThreadLocalIpUtils.set(remoteAddr.getAddress().getHostAddress());
                             }
                         }
@@ -196,7 +205,7 @@ public class ScribeServer implements IConnection {
                             @Override
                             public void close() {
                                 if(LOG.isDebugEnabled()){
-                                    LOG.debug(".....................close");
+                                    LOG.debug(".....................close,ip={}",get());
                                 }
 //                                ThreadLocalIpUtils.remove();
                                 remove();
@@ -206,8 +215,51 @@ public class ScribeServer implements IConnection {
                     }
                 });
                 server = new TThreadPoolServer(args);
+//                server.setServerEventHandler(new TServerEventHandler() {
+//                    @Override
+//                    public void preServe() {
+//                        //To change body of implemented methods use File | Settings | File Templates.
+//                    }
+//
+//                    @Override
+//                    public ServerContext createContext(TProtocol tProtocol, TProtocol tProtocol2) {
+//                        TTransport transport = tProtocol.getTransport();
+//                        LOG.info(transport instanceof TBufferedT);
+//                        if (transport instanceof TSocket) {
+//                            TSocket tSocket = (TSocket) transport;
+//                            if (tSocket != null) {
+//
+//                                InetSocketAddress remoteAddr = (InetSocketAddress) tSocket.getSocket().getRemoteSocketAddress();
+//                                LOG.info("ip:port ={},long={},thread id={}", remoteAddr.getAddress(), IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()), Thread.currentThread().getId());
+//                                set(IpUtils.ipStrToLong(remoteAddr.getAddress().getHostAddress()) + "");
+//                            }
+//                        } else {
+//                            LOG.error("event createContext, transport instanceof TSocket error ");
+//                        }
+//                        return null;  //To change body of implemented methods use File | Settings | File Templates.
+//                    }
+//
+//                    @Override
+//                    public void deleteContext(ServerContext serverContext, TProtocol tProtocol, TProtocol tProtocol2) {
+//                        TTransport base = tProtocol.getTransport();
+//                        if (base instanceof TSocket) {
+//                            if (LOG.isDebugEnabled()) {
+//                                LOG.debug(".....................close,ip={}", get());
+//                            }
+//                            remove();
+//                        }else{
+//                            LOG.error("event deleteContext,base instanceof TSocket error");
+//                        }
+//                        //To change body of implemented methods use File | Settings | File Templates.
+//                    }
+//
+//                    @Override
+//                    public void processContext(ServerContext serverContext, TTransport tTransport, TTransport tTransport2) {
+//                        //To change body of implemented methods use File | Settings | File Templates.
+//                    }
+//                });
 
-                LOG.info("Starting Scribe Source on port ={},start thread size={}" , port,workers);
+                LOG.info("Starting Scribe Source on port ={},start thread size={}", port, workers);
 
                 server.serve();
             } catch (Exception e) {

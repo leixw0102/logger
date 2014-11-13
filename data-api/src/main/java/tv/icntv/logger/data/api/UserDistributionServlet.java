@@ -24,6 +24,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Closeables;
 import org.apache.commons.io.IOUtils;
 import redis.clients.jedis.Jedis;
+import tv.icntv.logger.common.DateUtils;
 import tv.icntv.logger.common.cache.IRedisCache;
 import tv.icntv.logger.common.cache.Redis;
 import tv.icntv.logger.common.exception.CacheExecption;
@@ -74,5 +75,19 @@ public class UserDistributionServlet extends AbstractServlet {
             }
         });
         writer.println(JSON.toJSONString(list));
+    }
+    public static void main(String[]args){
+        Redis.execute(new IRedisCache<List<UserDistribute>>() {
+            @Override
+            public List<UserDistribute> callBack(Jedis jedis) throws CacheExecption {
+                Map<String,String> maps=jedis.hgetAll(DateUtils.getDay("yyyyMMdd")+"-user-dis");
+                Set<String> sets = maps.keySet();
+//                List<UserDistribute> result = Lists.newArrayList();
+                for(String k : sets ){
+                    System.out.println(k+"\t"+maps.get(k));
+                }
+                return null;  //To change body of implemented methods use File | Settings | File Templates.
+            }
+        });
     }
 }

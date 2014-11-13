@@ -41,7 +41,7 @@ public class IpPartitioner implements Partitioner {
         logger.info(key.toString()+"\t"+i);
         String stringKey = (String) key;
         try{
-        partition = (int) (Longs.tryParse(stringKey) % i);
+            partition = (int) (Longs.tryParse(stringKey) % i);
         }catch (Exception e){
 
         }

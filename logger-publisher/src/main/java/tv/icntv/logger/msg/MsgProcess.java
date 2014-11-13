@@ -17,15 +17,10 @@ package tv.icntv.logger.msg;/*
  * under the License.
  */
 
-import com.facebook.generate.LogEntry;
-import com.google.common.base.Function;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import tv.icntv.logger.common.IpUtils;
-import tv.icntv.logger.common.ThreadLocalIpUtils;
+import scribe.thrift.LogEntry;
 import tv.icntv.logger.msg.receive.CategoryEnum;
 
 import java.text.MessageFormat;
@@ -71,9 +66,13 @@ public class MsgProcess extends AbstractReceiverAndSender  {
             }
             String topic=categoryEnum.getKafkaTopic();
             String msg=logEntry.getMessage();
-
-            msg = MessageFormat.format(msg, IpUtils.ipStrToLong(ip)+"");
-
+            if(logger.isDebugEnabled()){
+                logger.debug("transfer before msg  ={}",msg);
+            }
+            msg = MessageFormat.format(msg, ip);
+            if(logger.isDebugEnabled()){
+                logger.debug("transfer after msg ={}",msg);
+            }
             List<String> values=Splitter.on(split).trimResults().limit(7).splitToList(msg);
             String contents=values.get(6);
             if(Strings.isNullOrEmpty(contents)){

@@ -17,8 +17,8 @@ package tv.icntv.logger.msg;/*
  * under the License.
  */
 
-import com.facebook.generate.LogEntry;
 import com.google.common.collect.Lists;
+import scribe.thrift.LogEntry;
 import tv.icntv.logger.msg.receive.CategoryEnum;
 import tv.icntv.logger.test.Test;
 

@@ -23,4 +23,4 @@ else
   JAVA="$JAVA_HOME/bin/java"
 fi
 
-java $PUBLISH_LOG4J_OPTS $PUBLISH_KAFKA_OPTS -classpath $CLASSPATH  tv.icntv.logger.Main >> ./publish.log&
+java $PUBLISH_LOG4J_OPTS $PUBLISH_KAFKA_OPTS -classpath $CLASSPATH  tv.icntv.logger.Main -workers 100 >> ./publish.log &

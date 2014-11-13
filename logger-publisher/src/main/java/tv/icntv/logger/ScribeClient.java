@@ -17,10 +17,6 @@ package tv.icntv.logger;/*
  * under the License.
  */
 
-import com.facebook.fb303.FacebookService;
-import com.facebook.generate.LogEntry;
-import com.facebook.generate.ResultCode;
-import com.facebook.generate.scribe;
 import com.google.common.collect.Lists;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -29,6 +25,8 @@ import org.apache.thrift.transport.TFramedTransport;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 import org.apache.thrift.transport.TTransportException;
+import scribe.thrift.LogEntry;
+import scribe.thrift.scribe;
 
 /**
  * Created by leixw

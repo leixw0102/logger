@@ -17,11 +17,11 @@ package tv.icntv.logger.msg;/*
  * under the License.
  */
 
-import com.facebook.generate.LogEntry;
 import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import scribe.thrift.LogEntry;
 import tv.icntv.logger.exception.ReceiveExpetion;
 import tv.icntv.logger.exception.SendExpetion;
 import tv.icntv.logger.msg.send.KafkaClient;
@@ -86,7 +86,7 @@ public abstract class AbstractReceiverAndSender implements IReceiverSender<LogEn
         //To change body of implemented methods use File | Settings | File Templates.
         return receiveAndSend(message,"127.0.0.1");
     }
-    public abstract Map<String,List<String>> msgChange(List<com.facebook.generate.LogEntry> msgs,String ip);
+    public abstract Map<String,List<String>> msgChange(List<LogEntry> msgs,String ip);
 
     public void setClient(KafkaClient client) {
         this.client = client;
