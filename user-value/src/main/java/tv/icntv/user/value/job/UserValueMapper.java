@@ -48,9 +48,5 @@ public class UserValueMapper extends Mapper<LongWritable,Text,Text,LongWritable>
         }
         context.write(new Text(icntvId),new LongWritable(time));
     }
-    public static void main(String []args){
-        String str="010121009309129|2014-11-07 19:59:37||http://vod01.media.ysten.com/media/new/2013/09/26/hd_dy_ggszm_20130926.ts|777|10|114|7|246|1317711|no";
-        List<String> splitValues = Lists.newArrayList(Splitter.on("|").limit(11).split(str));
-        System.out.println(Longs.tryParse(splitValues.get(9)));
-    }
+
 }

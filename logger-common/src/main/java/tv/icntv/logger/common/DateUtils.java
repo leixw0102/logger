@@ -80,7 +80,7 @@ public class DateUtils {
         List<String> list = Lists.newArrayList();
         int days = Days.daysBetween(start,end).getDays();
         for(int i=0;i<=days;i++){
-            list.add(start.plusDays(1).toString(format));
+            list.add(start.plusDays(i).toString(format));
         }
         return list;
     }
