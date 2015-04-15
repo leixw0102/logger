@@ -30,17 +30,35 @@ public class FileUtils {
 	Properties pro = PropertiesUtils.getProperties();
 	private Logger logger = LoggerFactory.getLogger(FileUtils.class);
 	private String path=pro.getProperty("icntv.stb.log.path","/data/hadoop/icntv/log/data/");
-
-	private String baseFileName="qqStb-";
-	
+    /**
+     * source file prefix
+     */
+	private String baseFileName=pro.getProperty("icntv.stb.log.prefix","qqStb-");
+    /**
+     * source file suffix
+     */
 	private String suffix=pro.getProperty("icntv.stb.log.file.suffix", ".log");
+    /**
+     * target path url
+     */
 	private String hdfs=pro.getProperty("icntv.stb.hdfs.url","hdfs://icntv/icntv/log/stb");
+    /**
+     * compressed path
+     */
 	private String lzoPath=pro.getProperty("icntv.stb.compress.log.path","/data/hadoop/icntv/log/lzoData");
 	public String fileName="";
     /**
      * 生成文件时间
      */
     private String generateFileCron=pro.getProperty("icntv.stb.file.cron","0 * * * *");
+    /**
+     * scribe server received stream,then sourceType =UN_COMPRESS_NONE or other system received gz,then sourceType =;
+     */
+    private String sourceUncompressedType=pro.getProperty("icntv.stb.log.source.execute.type");
+    /**
+     * compressed type is lzo
+     */
+    private String targetCompressedType= pro.getProperty("icntv.stb.log.target.execute.type");
 
 	public String getFileName() {
 		return fileName;
@@ -104,11 +122,10 @@ public class FileUtils {
 				if(!currentFile.equals(getFileName())){
 						logger.info("start compress and send to hdfs");
 //						new ClientThread(currentFile,lzoPath+File.separator+day(),hdfs+File.separator+day()).start();
-//                        HdfsModule module = new HdfsModule(new String[]{currentFile,lzoPath+File.separator+day(),"LZO_COMPRESS","UN_COMPRESS_NONE"});
-//                        Injector injector = Guice.createInjector(module);//(new String[]{"d:\\douban\\error.txt","d:\\",""}));
-//
-//                        Runnable client=injector.getInstance(Runnable.class);
-//                        new Thread(client).start();
+                        HdfsModule module = new HdfsModule(new String[]{currentFile,lzoPath+File.separator+day(),hdfs+File.separator+day(),targetCompressedType,sourceUncompressedType});
+                        Injector injector = Guice.createInjector(module);
+                        Runnable client=injector.getInstance(Runnable.class);
+                        new Thread(client).start();
 //					}
 					currentFile=getFileName();
 				}

@@ -35,6 +35,15 @@ public class IcntvScribeServer {
     public static final String SCRIBE_CATEGORY = "category";
 
     private static final int DEFAULT_WORKERS = 10;
+    private boolean isTest=false;
+
+    public boolean isTest() {
+        return isTest;
+    }
+
+    public void setTest(boolean test) {
+        isTest = test;
+    }
 
     private String splitter="\r\n";
     private TServer server;
@@ -77,12 +86,19 @@ public class IcntvScribeServer {
 
     FileChannel channel = null;
     public IcntvScribeServer(int port,int worker){
-    	this.port=port;
-    	this.workers=worker;
-    	fileUtils=new FileUtils();
+    	this(port, worker,false);
     }
+
+    public IcntvScribeServer( int port, int workers,boolean test) {
+
+        this.port = port;
+        this.workers = workers;
+        isTest = test;
+        fileUtils=new FileUtils();
+    }
+
     public IcntvScribeServer(){
-    	this(14630,10);
+    	this(14630,10,false);
     }
 
     class Receiver1 implements scribe.AsyncIface{
@@ -103,17 +119,16 @@ public class IcntvScribeServer {
                         }
                     }
                 });
-//                System.out.println(".ok");
                 String message=Joiner.on(splitter).join(msgs);
-                LOG.info(message);
-
-                fileUtils.write(message+splitter);
-                resultHandler.onComplete(ResultCode.OK);
-//                System.out.println(".ok..");
+                if(isTest()){
+                    LOG.info(message+splitter);
+                }else{
+                    fileUtils.write(message+splitter);
+                    resultHandler.onComplete(ResultCode.OK);
+                }
             }else {
-                System.out.println(".error");
+                LOG.error(".error");
                 resultHandler.onError(new NullPointerException(ResultCode.TRY_LATER+""));
-//                System.out.println(".error...");
             }
         }
 
@@ -301,6 +316,8 @@ public class IcntvScribeServer {
 
         if(args.length == 2){
             new IcntvScribeServer(Integer.parseInt(args[0]),Integer.parseInt(args[1])).start();
+        }else if(args.length == 3){
+            new IcntvScribeServer(Integer.parseInt(args[0]),Integer.parseInt(args[1]),Boolean.parseBoolean(args[2])).start();
         }else{
             new IcntvScribeServer().start();
         }

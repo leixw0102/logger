@@ -24,6 +24,7 @@ import it.sauronsoftware.cron4j.SchedulerListener;
 import it.sauronsoftware.cron4j.TaskExecutor;
 import tv.icntv.sender.HdfsModule;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -76,10 +77,14 @@ public class TestSend {
 //        scheduler.stop();
 //        System.out.println(URLEncoder.encode("|||1.0.0|qq|6c:fa:a7:47:b7:43|59.37.125.39|1428403802|0|104|AppLog|ProGatherID=tmqmgx1eb6wmuz8","utf-8"));
 //        System.out.println(URLDecoder.decode("|||1.0.0|qq|6c:fa:a7:47:b7:43|59.37.125.39|1428403802|0|104|AppLog|ProGatherID=tmqmgx1eb6wmuz8","utf-8"));
-        HdfsModule module = new HdfsModule(new String[]{args[0],args[1],args[2],"LZO_COMPRESS","UN_COMPRESS_NONE"});
-                        Injector injector = Guice.createInjector(module);//(new String[]{"d:\\douban\\error.txt","d:\\",""}));
-
-                        Runnable client=injector.getInstance(Runnable.class);
-                        new Thread(client).start();
+//        HdfsModule module = new HdfsModule(new String[]{args[0],args[1],args[2],"LZO_COMPRESS","UN_COMPRESS_NONE"});
+//                        Injector injector = Guice.createInjector(module);//(new String[]{"d:\\douban\\error.txt","d:\\",""}));
+//
+//                        Runnable client=injector.getInstance(Runnable.class);
+//                        new Thread(client).start();
+        String test="stb-2015-04-15-08.log";
+        String tmp = test.substring(test.lastIndexOf(File.separator)+1);
+        tmp=tmp.replace("stb-", "").replace(".log", "");
+        System.out.println(tmp.substring(0,tmp.lastIndexOf("-")));
     }
 }
